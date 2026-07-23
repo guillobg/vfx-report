@@ -163,6 +163,9 @@ function DashboardContent() {
                     <th className="text-left text-xs font-medium text-gray-500 uppercase px-4 py-3">
                       Semana
                     </th>
+                    <th className="text-left text-xs font-medium text-gray-500 uppercase px-4 py-3">
+                      Ver
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -183,6 +186,14 @@ function DashboardContent() {
                       )}
                       <td className="px-4 py-3 text-sm text-gray-900">
                         {formatDate(report.weekEnding)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/report/${report.id}`}
+                          className="text-xs font-medium text-blue-600 hover:text-blue-800 underline"
+                        >
+                          Ver informe →
+                        </Link>
                       </td>
                     </tr>
                   ))}
