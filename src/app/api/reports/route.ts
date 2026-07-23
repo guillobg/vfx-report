@@ -63,35 +63,43 @@ export async function POST(request: NextRequest) {
       noteworthy: data.narrative.noteworthy || "",
     });
 
-    // 2. Create finance records
+    // 2. Create finance records (filter out empty ones)
     const financeRecords = [
-      ...data.finance.episodes.map((ep) => ({
-        episodeReel: ep.episodeReel,
-        cutStatus: ep.cutStatus,
-        budgetedCost: ep.budgetedCost,
-        efc: ep.efc,
-        earlyTurnoverDate: ep.earlyTurnoverDate,
-        vfxTurnoverDate: ep.vfxTurnoverDate,
-        vfxDeliveryDate: ep.vfxDeliveryDate,
-        notes: ep.notes,
-      })),
-      {
-        episodeReel: "ASSETS",
-        budgetedCost: data.finance.assetsBudgeted,
-        efc: data.finance.assetsEfc,
-      },
-      {
-        episodeReel: "OVERHEADS & LABOUR",
-        budgetedCost: data.finance.overheadsBudgeted,
-        efc: data.finance.overheadsEfc,
-      },
+      ...data.finance.episodes
+        .filter((ep) => ep.budgetedCost || ep.efc || ep.cutStatus || ep.vfxTurnoverDate || ep.vfxDeliveryDate)
+        .map((ep) => ({
+          episodeReel: ep.episodeReel,
+          cutStatus: ep.cutStatus,
+          budgetedCost: ep.budgetedCost,
+          efc: ep.efc,
+          earlyTurnoverDate: ep.earlyTurnoverDate,
+          vfxTurnoverDate: ep.vfxTurnoverDate,
+          vfxDeliveryDate: ep.vfxDeliveryDate,
+          notes: ep.notes,
+        })),
+      ...(data.finance.assetsBudgeted || data.finance.assetsEfc
+        ? [{
+            episodeReel: "ASSETS",
+            budgetedCost: data.finance.assetsBudgeted,
+            efc: data.finance.assetsEfc,
+          }]
+        : []),
+      ...(data.finance.overheadsBudgeted || data.finance.overheadsEfc
+        ? [{
+            episodeReel: "OVERHEADS & LABOUR",
+            budgetedCost: data.finance.overheadsBudgeted,
+            efc: data.finance.overheadsEfc,
+          }]
+        : []),
     ];
-    await createFinanceRecords(reportId, financeRecords);
+    if (financeRecords.length > 0) {
+      await createFinanceRecords(reportId, financeRecords);
+    }
 
-    // 3. Create shot tracking records
-    await createShotRecords(
-      reportId,
-      data.shots.episodes.map((ep) => ({
+    // 3. Create shot tracking records (filter out empty ones)
+    const shotRecords = data.shots.episodes
+      .filter((ep) => ep.bidding || ep.inProgress || ep.finalDelivered || ep.onHold || ep.omitCtd)
+      .map((ep) => ({
         episodeReel: ep.episodeReel,
         budgetedCount: ep.budgetedCount,
         bidding: ep.bidding,
@@ -100,8 +108,10 @@ export async function POST(request: NextRequest) {
         onHold: ep.onHold,
         omitCtd: ep.omitCtd,
         notes: ep.notes,
-      }))
-    );
+      }));
+    if (shotRecords.length > 0) {
+      await createShotRecords(reportId, shotRecords);
+    }
 
     // 4. Create asset records
     if (data.assets.assets.length > 0) {
