@@ -172,19 +172,21 @@ export async function createFinanceRecords(
       method: "POST",
       headers,
       body: JSON.stringify({
-        records: batch.map((r) => ({
-          fields: {
-            Report: [reportId],
-            "Episode / Reel": r.episodeReel,
-            ...(r.cutStatus ? { "Cut Status": r.cutStatus } : {}),
-            "Budgeted Cost": r.budgetedCost,
-            EFC: r.efc,
-            ...(r.earlyTurnoverDate ? { "Early Turnover Date": r.earlyTurnoverDate } : {}),
-            ...(r.vfxTurnoverDate ? { "VFX Turnover Date": r.vfxTurnoverDate } : {}),
-            ...(r.vfxDeliveryDate ? { "VFX Delivery Date": r.vfxDeliveryDate } : {}),
-            ...(r.notes ? { Notes: r.notes } : {}),
-          },
-        })),
+        records: batch.map((r) => {
+          const isEpisode = /^\d{2}$/.test(r.episodeReel);
+          return {
+            fields: {
+              Report: [reportId],
+              ...(isEpisode ? { "Episode / Reel": r.episodeReel } : {}),
+              ...(r.cutStatus ? { "Cut Status": r.cutStatus } : {}),
+              "Budgeted Cost": r.budgetedCost || 0,
+              EFC: r.efc || 0,
+              ...(r.vfxTurnoverDate ? { "VFX Turnover Date": r.vfxTurnoverDate } : {}),
+              ...(r.vfxDeliveryDate ? { "VFX Delivery Date": r.vfxDeliveryDate } : {}),
+              ...(r.notes ? { Notes: r.notes } : {}),
+            },
+          };
+        }),
       }),
     });
     await rateLimitDelay();

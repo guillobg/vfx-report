@@ -94,7 +94,7 @@ export function ReportForm() {
     const currentFinEps = form.getValues("finance.episodes");
     if (currentFinEps.length === 0) {
       const episodes = Array.from({ length: count }, (_, i) => ({
-        episodeReel: isMovie ? `${prefix} ${i + 1}` : `${prefix} ${(i + 1).toString().padStart(2, "0")}`,
+        episodeReel: (i + 1).toString().padStart(2, "0"),
         cutStatus: "",
         earlyTurnoverDate: "",
         vfxTurnoverDate: "",
@@ -106,7 +106,7 @@ export function ReportForm() {
       form.setValue("finance.episodes", episodes);
 
       const shotEps = Array.from({ length: count }, (_, i) => ({
-        episodeReel: isMovie ? `${prefix} ${i + 1}` : `${prefix} ${(i + 1).toString().padStart(2, "0")}`,
+        episodeReel: (i + 1).toString().padStart(2, "0"),
         budgetedCount: 0,
         bidding: 0,
         inProgress: 0,

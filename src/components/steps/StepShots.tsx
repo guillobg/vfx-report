@@ -81,7 +81,7 @@ export function StepShots({ form }: StepShotsProps) {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <h3 className="text-sm font-semibold text-gray-700">
-                    {ep?.episodeReel || `Episodio ${index + 1}`}
+                    Episodio {ep?.episodeReel || index + 1}
                   </h3>
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
                     Total: {epTotal} | {epPercent}% completado
@@ -104,11 +104,14 @@ export function StepShots({ form }: StepShotsProps) {
                   <label className="block text-xs font-medium text-gray-600">
                     Episodio / Bobina
                   </label>
-                  <input
+                  <select
                     {...register(`shots.episodes.${index}.episodeReel`)}
-                    placeholder="EPISODE 01 / REEL 1"
                     className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
-                  />
+                  >
+                    {["01","02","03","04","05","06","07","08"].map((v) => (
+                      <option key={v} value={v}>{v}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600">
@@ -194,7 +197,7 @@ export function StepShots({ form }: StepShotsProps) {
         type="button"
         onClick={() =>
           append({
-            episodeReel: `EPISODE ${(fields.length + 1).toString().padStart(2, "0")}`,
+            episodeReel: (fields.length + 1).toString().padStart(2, "0"),
             budgetedCount: 0,
             bidding: 0,
             inProgress: 0,

@@ -55,7 +55,7 @@ export function StepFinance({ form }: StepFinanceProps) {
           >
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-gray-700">
-                {episodes?.[index]?.episodeReel || `Episodio ${index + 1}`}
+                Episodio {episodes?.[index]?.episodeReel || index + 1}
               </h3>
               {fields.length > 1 && (
                 <button
@@ -74,11 +74,14 @@ export function StepFinance({ form }: StepFinanceProps) {
                 <label className="block text-xs font-medium text-gray-600">
                   Episodio / Bobina
                 </label>
-                <input
+                <select
                   {...register(`finance.episodes.${index}.episodeReel`)}
-                  placeholder="EPISODE 01 / REEL 1"
                   className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
-                />
+                >
+                  {["01","02","03","04","05","06","07","08"].map((v) => (
+                    <option key={v} value={v}>{v}</option>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -166,7 +169,7 @@ export function StepFinance({ form }: StepFinanceProps) {
         type="button"
         onClick={() =>
           append({
-            episodeReel: `EPISODE ${(fields.length + 1).toString().padStart(2, "0")}`,
+            episodeReel: (fields.length + 1).toString().padStart(2, "0"),
             cutStatus: "",
             earlyTurnoverDate: "",
             vfxTurnoverDate: "",
