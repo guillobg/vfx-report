@@ -168,7 +168,8 @@ export function ReportForm() {
         throw new Error(err.error || "Error al enviar el informe");
       }
 
-      router.push("/dashboard?submitted=true");
+      const result = await res.json();
+      router.push(`/dashboard?submitted=true&reportId=${result.reportId}`);
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Error desconocido");
     } finally {

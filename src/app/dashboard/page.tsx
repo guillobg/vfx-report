@@ -22,6 +22,7 @@ function DashboardContent() {
   const [loading, setLoading] = useState(true);
 
   const justSubmitted = searchParams.get("submitted") === "true";
+  const reportId = searchParams.get("reportId");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -97,12 +98,21 @@ function DashboardContent() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Success banner */}
         {justSubmitted && (
-          <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4 flex items-center gap-3">
-            <CheckCircle className="text-emerald-600" size={20} />
-            <p className="text-sm text-emerald-700 font-medium">
-              ¡Informe enviado correctamente! Los datos ya están disponibles en
-              Airtable.
-            </p>
+          <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <CheckCircle className="text-emerald-600" size={20} />
+              <p className="text-sm text-emerald-700 font-medium">
+                ¡Informe enviado correctamente! Los datos ya están disponibles en Airtable.
+              </p>
+            </div>
+            {reportId && (
+              <Link
+                href={`/report/${reportId}`}
+                className="text-sm font-medium text-emerald-700 underline hover:text-emerald-900"
+              >
+                Ver informe →
+              </Link>
+            )}
           </div>
         )}
 

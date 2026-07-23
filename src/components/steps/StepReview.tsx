@@ -149,7 +149,17 @@ export function StepReview({ form }: StepReviewProps) {
                     <td className="py-1 pr-2 text-right text-emerald-600">{ep.finalDelivered || 0}</td>
                     <td className="py-1 pr-2 text-right text-orange-600">{ep.onHold || 0}</td>
                     <td className="py-1 pr-2 text-right text-gray-500">{ep.omitCtd || 0}</td>
-                    <td className="py-1 text-right font-medium">{epPercent}%</td>
+                    <td className="py-1 text-right font-medium">
+                        <div className="flex items-center gap-1 justify-end">
+                          <div className="w-14 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-emerald-500 rounded-full"
+                              style={{ width: `${Math.min(parseFloat(epPercent), 100)}%` }}
+                            />
+                          </div>
+                          <span className="text-xs w-12 text-right">{epPercent}%</span>
+                        </div>
+                      </td>
                   </tr>
                 );
               })}
