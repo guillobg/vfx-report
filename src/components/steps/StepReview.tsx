@@ -80,6 +80,11 @@ export function StepReview({ form }: StepReviewProps) {
         <div className="bg-white border rounded-lg p-4">
           <p className="text-xs text-gray-500 uppercase">Assets</p>
           <p className="text-lg font-bold text-gray-900">{data.assets?.assets?.length || 0}</p>
+          <p className="text-xs text-emerald-600">
+            {data.assets?.assets?.length
+              ? (data.assets.assets.reduce((sum, a) => sum + (a.percentComplete || 0), 0) / data.assets.assets.length).toFixed(1)
+              : "0"}% completado
+          </p>
         </div>
       </div>
 
