@@ -8,6 +8,19 @@ const headers = {
   "Content-Type": "application/json",
 };
 
+async function fetchRecordsByIds(tableId: string, ids: string[]) {
+  if (!ids || ids.length === 0) return [];
+
+  // Build OR(RECORD_ID()="id1", RECORD_ID()="id2", ...) formula
+  const formula = `OR(${ids.map((id) => `RECORD_ID()="${id}"`).join(",")})`;
+  const res = await fetch(
+    `https://api.airtable.com/v0/${BASE_ID}/${tableId}?filterByFormula=${encodeURIComponent(formula)}`,
+    { headers }
+  );
+  const data = await res.json();
+  return (data.records || []).map((r: any) => r.fields);
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -24,36 +37,25 @@ export async function GET(
       return NextResponse.json({ error: "Informe no encontrado" }, { status: 404 });
     }
     const report = await reportRes.json();
+    const fields = report.fields;
 
-    // Fetch linked finance records
-    const financeFormula = encodeURIComponent(`FIND("${id}", ARRAYJOIN(Report))`);
-    const financeRes = await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/tblvQVK7E9dGzlzuR?filterByFormula=${financeFormula}`,
-      { headers }
-    );
-    const financeData = await financeRes.json();
+    // Get linked record IDs
+    const financeIds = fields["Finance Tracking"] || [];
+    const shotIds = fields["Shot Tracking"] || [];
+    const assetIds = fields["Asset Tracking"] || [];
 
-    // Fetch linked shot records
-    const shotFormula = encodeURIComponent(`FIND("${id}", ARRAYJOIN(Report))`);
-    const shotRes = await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/tblXpf4PAjcuzZr1p?filterByFormula=${shotFormula}`,
-      { headers }
-    );
-    const shotData = await shotRes.json();
-
-    // Fetch linked asset records
-    const assetFormula = encodeURIComponent(`FIND("${id}", ARRAYJOIN(Report))`);
-    const assetRes = await fetch(
-      `https://api.airtable.com/v0/${BASE_ID}/tblIurs3ds5SN2o7e?filterByFormula=${assetFormula}`,
-      { headers }
-    );
-    const assetData = await assetRes.json();
+    // Fetch linked records by IDs
+    const [finance, shots, assets] = await Promise.all([
+      fetchRecordsByIds("tblvQVK7E9dGzlzuR", financeIds),
+      fetchRecordsByIds("tblXpf4PAjcuzZr1p", shotIds),
+      fetchRecordsByIds("tblIurs3ds5SN2o7e", assetIds),
+    ]);
 
     return NextResponse.json({
-      report: report.fields,
-      finance: (financeData.records || []).map((r: any) => r.fields),
-      shots: (shotData.records || []).map((r: any) => r.fields),
-      assets: (assetData.records || []).map((r: any) => r.fields),
+      report: fields,
+      finance,
+      shots,
+      assets,
     });
   } catch (error) {
     console.error("Error fetching report:", error);
