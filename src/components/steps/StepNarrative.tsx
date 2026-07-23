@@ -114,7 +114,6 @@ export function StepNarrative({ form }: StepNarrativeProps) {
           <label htmlFor="progress" className="block text-sm font-medium text-gray-700">
             Progreso y Desarrollos Clave
             <span className="text-xs text-gray-500 ml-1">(Progress & Key Developments)</span>
-            <span className="text-red-500"> *</span>
           </label>
           <textarea
             id="progress"

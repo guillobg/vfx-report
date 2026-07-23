@@ -31,28 +31,28 @@ export const financeEpisodeSchema = z.object({
   earlyTurnoverDate: z.string().optional(),
   vfxTurnoverDate: z.string().optional(),
   vfxDeliveryDate: z.string().optional(),
-  budgetedCost: z.number().min(0, "Debe ser positivo"),
-  efc: z.number().min(0, "Debe ser positivo"),
+  budgetedCost: z.coerce.number().min(0).default(0),
+  efc: z.coerce.number().min(0).default(0),
   notes: z.string().optional(),
 });
 
 export const financeTrackingSchema = z.object({
   episodes: z.array(financeEpisodeSchema).min(1, "Añade al menos un episodio/bobina"),
-  assetsBudgeted: z.number().min(0).default(0),
-  assetsEfc: z.number().min(0).default(0),
-  overheadsBudgeted: z.number().min(0).default(0),
-  overheadsEfc: z.number().min(0).default(0),
+  assetsBudgeted: z.coerce.number().min(0).default(0),
+  assetsEfc: z.coerce.number().min(0).default(0),
+  overheadsBudgeted: z.coerce.number().min(0).default(0),
+  overheadsEfc: z.coerce.number().min(0).default(0),
 });
 
 // Step 3: Shot Tracking
 export const shotEpisodeSchema = z.object({
   episodeReel: z.string().min(1, "Requerido"),
-  budgetedCount: z.number().int().min(0),
-  bidding: z.number().int().min(0),
-  inProgress: z.number().int().min(0),
-  finalDelivered: z.number().int().min(0),
-  onHold: z.number().int().min(0),
-  omitCtd: z.number().int().min(0),
+  budgetedCount: z.coerce.number().int().min(0).default(0),
+  bidding: z.coerce.number().int().min(0).default(0),
+  inProgress: z.coerce.number().int().min(0).default(0),
+  finalDelivered: z.coerce.number().int().min(0).default(0),
+  onHold: z.coerce.number().int().min(0).default(0),
+  omitCtd: z.coerce.number().int().min(0).default(0),
   notes: z.string().optional(),
 });
 
@@ -66,7 +66,7 @@ export const assetSchema = z.object({
   episodes: z.string().optional(),
   vendors: z.string().optional(),
   status: z.string().optional(),
-  percentComplete: z.number().min(0).max(100).default(0),
+  percentComplete: z.coerce.number().min(0).max(100).default(0),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   notes: z.string().optional(),
@@ -78,7 +78,7 @@ export const assetTrackingSchema = z.object({
 
 // Step 5: Narrative Sections
 export const narrativeSchema = z.object({
-  progress: z.string().min(1, "Este campo es obligatorio"),
+  progress: z.string().optional(),
   financeUpdates: z.string().optional(),
   warnings: z.string().optional(),
   noteworthy: z.string().optional(),
