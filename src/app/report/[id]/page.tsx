@@ -110,6 +110,7 @@ export default function ReportViewPage() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b text-gray-500">
+                  <th className="text-left py-2 pr-2">Category</th>
                   <th className="text-left py-2 pr-2">Episode/Reel</th>
                   <th className="text-left py-2 pr-2">Cut Status</th>
                   <th className="text-right py-2 pr-2">Budget</th>
@@ -120,7 +121,8 @@ export default function ReportViewPage() {
               <tbody>
                 {finance.map((r, i) => (
                   <tr key={i} className="border-b border-gray-50">
-                    <td className="py-2 pr-2">{r["Episode / Reel"]}</td>
+                    <td className="py-2 pr-2 font-medium">{r["Category"] || "—"}</td>
+                    <td className="py-2 pr-2">{r["Episode / Reel"] || "—"}</td>
                     <td className="py-2 pr-2">{r["Cut Status"] || "—"}</td>
                     <td className="py-2 pr-2 text-right">{formatCurrency(r["Budgeted Cost"] || 0, currency)}</td>
                     <td className="py-2 pr-2 text-right">{formatCurrency(r["EFC"] || 0, currency)}</td>
