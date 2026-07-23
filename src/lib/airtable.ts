@@ -224,7 +224,7 @@ export async function createShotRecords(
             Report: [reportId],
             "Episode / Reel": r.episodeReel,
             "Budgeted Count": r.budgetedCount,
-            Bidding: r.bidding,
+            "Total Shots": r.bidding,
             "In Progress": r.inProgress,
             "Final Delivered": r.finalDelivered,
             "On Hold": r.onHold,
