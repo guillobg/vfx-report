@@ -43,8 +43,7 @@ export function StepShots({ form }: StepShotsProps) {
     }
   ) || { budgetedCount: 0, bidding: 0, inProgress: 0, finalDelivered: 0, onHold: 0, omitCtd: 0 };
 
-  const totalCount =
-    totals.bidding + totals.inProgress + totals.finalDelivered + totals.onHold + totals.omitCtd;
+  const totalCount = totals.bidding;
   const percentComplete =
     totalCount > 0
       ? (((totals.finalDelivered + totals.omitCtd) / totalCount) * 100).toFixed(1)
@@ -65,12 +64,7 @@ export function StepShots({ form }: StepShotsProps) {
       <div className="space-y-4">
         {fields.map((field, index) => {
           const ep = episodes?.[index];
-          const epTotal =
-            (ep?.bidding || 0) +
-            (ep?.inProgress || 0) +
-            (ep?.finalDelivered || 0) +
-            (ep?.onHold || 0) +
-            (ep?.omitCtd || 0);
+          const epTotal = ep?.bidding || 0;
           const epPercent =
             epTotal > 0
               ? (
