@@ -48,8 +48,10 @@ export function StepFinance({ form }: StepFinanceProps) {
         </p>
       </div>
 
-      {/* Episode rows */}
-      <div className="space-y-4">
+      {/* Episode rows - VFX Shots category */}
+      <div className="border border-gray-200 rounded-lg p-4 bg-emerald-50">
+        <h4 className="text-xs font-bold text-emerald-800 uppercase mb-4">VFX Shots — por Episodio / Bobina</h4>
+        <div className="space-y-4">
         {fields.map((field, index) => (
           <div
             key={field.id}
@@ -165,98 +167,118 @@ export function StepFinance({ form }: StepFinanceProps) {
             </div>
           </div>
         ))}
-      </div>
+        </div>
 
-      <button
-        type="button"
-        onClick={() =>
-          append({
-            episodeReel: (fields.length + 1).toString().padStart(2, "0"),
-            cutStatus: "",
-            earlyTurnoverDate: "",
-            vfxTurnoverDate: "",
-            vfxDeliveryDate: "",
-            budgetedCost: 0,
-            efc: 0,
-            notes: "",
-          })
-        }
-        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-      >
-        <Plus size={16} /> Añadir Episodio
-      </button>
+        <button
+          type="button"
+          onClick={() =>
+            append({
+              episodeReel: (fields.length + 1).toString().padStart(2, "0"),
+              cutStatus: "",
+              earlyTurnoverDate: "",
+              vfxTurnoverDate: "",
+              vfxDeliveryDate: "",
+              budgetedCost: 0,
+              efc: 0,
+              notes: "",
+            })
+          }
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors mt-3"
+        >
+          <Plus size={16} /> Añadir Episodio
+        </button>
+      </div>
 
       {/* Assets & Overheads */}
       <div className="border-t pt-6 mt-6">
         <h3 className="text-sm font-semibold text-gray-700 mb-4">
-          Assets & Overheads
+          Costes Adicionales por Categoría
         </h3>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="block text-xs font-medium text-gray-600">
-              Assets — Presupuesto ({currency})
-            </label>
-            <input
-              type="number"
-              {...register("finance.assetsBudgeted", { valueAsNumber: true })}
-              placeholder="0"
-              className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
-            />
+
+        {/* Assets */}
+        <div className="border border-gray-200 rounded-lg p-4 bg-blue-50 mb-3">
+          <h4 className="text-xs font-bold text-blue-800 uppercase mb-3">Assets</h4>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-xs font-medium text-gray-600">
+                Presupuesto ({currency})
+              </label>
+              <input
+                type="number"
+                {...register("finance.assetsBudgeted", { valueAsNumber: true })}
+                placeholder="0"
+                className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600">
+                EFC ({currency})
+              </label>
+              <input
+                type="number"
+                {...register("finance.assetsEfc", { valueAsNumber: true })}
+                placeholder="0"
+                className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border bg-white"
+              />
+            </div>
           </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-600">
-              Assets — EFC ({currency})
-            </label>
-            <input
-              type="number"
-              {...register("finance.assetsEfc", { valueAsNumber: true })}
-              placeholder="0"
-              className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
-            />
+        </div>
+
+        {/* Overheads & Labour */}
+        <div className="border border-gray-200 rounded-lg p-4 bg-amber-50 mb-3">
+          <h4 className="text-xs font-bold text-amber-800 uppercase mb-3">Overheads & Labour</h4>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-xs font-medium text-gray-600">
+                Presupuesto ({currency})
+              </label>
+              <input
+                type="number"
+                {...register("finance.overheadsBudgeted", { valueAsNumber: true })}
+                placeholder="0"
+                className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600">
+                EFC ({currency})
+              </label>
+              <input
+                type="number"
+                {...register("finance.overheadsEfc", { valueAsNumber: true })}
+                placeholder="0"
+                className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border bg-white"
+              />
+            </div>
           </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-600">
-              Overheads & Labour — Presupuesto ({currency})
-            </label>
-            <input
-              type="number"
-              {...register("finance.overheadsBudgeted", { valueAsNumber: true })}
-              placeholder="0"
-              className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-600">
-              Overheads & Labour — EFC ({currency})
-            </label>
-            <input
-              type="number"
-              {...register("finance.overheadsEfc", { valueAsNumber: true })}
-              placeholder="0"
-              className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-600">
-              Supervisiones — Presupuesto ({currency})
-            </label>
-            <input
-              type="number"
-              {...register("finance.supervisionesBudgeted", { valueAsNumber: true })}
-              placeholder="0"
-              className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-600">
-              Supervisiones — EFC ({currency})
-            </label>
-            <input
-              type="number"
-              {...register("finance.supervisionesEfc", { valueAsNumber: true })}
-              placeholder="0"
-              className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
-            />
+        </div>
+
+        {/* Supervisiones */}
+        <div className="border border-gray-200 rounded-lg p-4 bg-purple-50">
+          <h4 className="text-xs font-bold text-purple-800 uppercase mb-3">Supervisiones</h4>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-xs font-medium text-gray-600">
+                Presupuesto ({currency})
+              </label>
+              <input
+                type="number"
+                {...register("finance.supervisionesBudgeted", { valueAsNumber: true })}
+                placeholder="0"
+                className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600">
+                EFC ({currency})
+              </label>
+              <input
+                type="number"
+                {...register("finance.supervisionesEfc", { valueAsNumber: true })}
+                placeholder="0"
+                className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border bg-white"
+              />
+            </div>
           </div>
         </div>
       </div>
