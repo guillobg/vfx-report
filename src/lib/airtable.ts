@@ -46,7 +46,6 @@ export interface WeeklyReport {
   progress: string;
   financeUpdates: string;
   warnings: string;
-  wbrSummary: string;
   noteworthy: string;
 }
 
@@ -123,7 +122,6 @@ export async function createWeeklyReport(data: {
   progress: string;
   financeUpdates: string;
   warnings: string;
-  wbrSummary: string;
   noteworthy: string;
 }): Promise<string> {
   const res = await fetch(`${BASE_URL}/${TABLES.weeklyReports}`, {
@@ -139,7 +137,6 @@ export async function createWeeklyReport(data: {
         "Progress & Key Developments": data.progress,
         "Finance Updates": data.financeUpdates,
         Warnings: data.warnings,
-        "WBR Summary": data.wbrSummary,
         Noteworthy: data.noteworthy,
       },
     }),
@@ -304,7 +301,7 @@ export async function getReportsForUser(submittedBy: string): Promise<WeeklyRepo
     progress: r.fields["Progress & Key Developments"] || "",
     financeUpdates: r.fields["Finance Updates"] || "",
     warnings: r.fields["Warnings"] || "",
-    wbrSummary: r.fields["WBR Summary"] || "",
+
     noteworthy: r.fields["Noteworthy"] || "",
   }));
 }
@@ -326,7 +323,7 @@ export async function getAllReports(): Promise<WeeklyReport[]> {
     progress: r.fields["Progress & Key Developments"] || "",
     financeUpdates: r.fields["Finance Updates"] || "",
     warnings: r.fields["Warnings"] || "",
-    wbrSummary: r.fields["WBR Summary"] || "",
+
     noteworthy: r.fields["Noteworthy"] || "",
   }));
 }

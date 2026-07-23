@@ -57,10 +57,9 @@ export async function POST(request: NextRequest) {
       weekEnding: data.metadata.weekEnding,
       submittedBy: session.user.email,
       currency: data.metadata.currency,
-      progress: data.narrative.progress,
+      progress: data.narrative.progress || "",
       financeUpdates: data.narrative.financeUpdates || "",
       warnings: data.narrative.warnings || "",
-      wbrSummary: "",
       noteworthy: data.narrative.noteworthy || "",
     });
 
