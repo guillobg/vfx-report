@@ -120,9 +120,7 @@ function DashboardContent() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <LayoutDashboard size={20} />
-            {session.user.role === "admin"
-              ? "Todos los Informes"
-              : "Mis Informes"}
+            VFX Weekly Status Reports
           </h2>
           <Link
             href="/report/new"
@@ -155,7 +153,7 @@ function DashboardContent() {
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="text-left text-xs font-medium text-gray-500 uppercase px-4 py-3">
-                      Semana
+                      Report ID
                     </th>
                     {session.user.role === "admin" && (
                       <th className="text-left text-xs font-medium text-gray-500 uppercase px-4 py-3">
@@ -163,10 +161,7 @@ function DashboardContent() {
                       </th>
                     )}
                     <th className="text-left text-xs font-medium text-gray-500 uppercase px-4 py-3">
-                      WBR Summary
-                    </th>
-                    <th className="text-left text-xs font-medium text-gray-500 uppercase px-4 py-3">
-                      Proyecto
+                      Semana
                     </th>
                   </tr>
                 </thead>
@@ -176,19 +171,18 @@ function DashboardContent() {
                       key={report.id}
                       className="hover:bg-gray-50 transition-colors"
                     >
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                        {formatDate(report.weekEnding)}
+                      <td className="px-4 py-3 text-sm font-medium text-blue-700">
+                        {report.code && report.weekEnding
+                          ? `${report.code}-${report.weekEnding}`
+                          : report.code || "—"}
                       </td>
                       {session.user.role === "admin" && (
                         <td className="px-4 py-3 text-sm text-gray-600">
                           {report.submittedBy}
                         </td>
                       )}
-                      <td className="px-4 py-3 text-sm text-gray-600 max-w-md truncate">
-                        {report.progress || "—"}
-                      </td>
-                      <td className="px-4 py-3 text-sm font-medium text-blue-700">
-                        {report.code || "—"}
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        {formatDate(report.weekEnding)}
                       </td>
                     </tr>
                   ))}
