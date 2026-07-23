@@ -42,6 +42,8 @@ export const financeTrackingSchema = z.object({
   assetsEfc: z.coerce.number().min(0).default(0),
   overheadsBudgeted: z.coerce.number().min(0).default(0),
   overheadsEfc: z.coerce.number().min(0).default(0),
+  supervisionesBudgeted: z.coerce.number().min(0).default(0),
+  supervisionesEfc: z.coerce.number().min(0).default(0),
 });
 
 // Step 3: Shot Tracking

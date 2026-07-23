@@ -28,12 +28,14 @@ export function StepFinance({ form }: StepFinanceProps) {
   const totalBudgeted =
     (episodes?.reduce((sum, ep) => sum + (ep.budgetedCost || 0), 0) || 0) +
     (watch("finance.assetsBudgeted") || 0) +
-    (watch("finance.overheadsBudgeted") || 0);
+    (watch("finance.overheadsBudgeted") || 0) +
+    (watch("finance.supervisionesBudgeted") || 0);
 
   const totalEfc =
     (episodes?.reduce((sum, ep) => sum + (ep.efc || 0), 0) || 0) +
     (watch("finance.assetsEfc") || 0) +
-    (watch("finance.overheadsEfc") || 0);
+    (watch("finance.overheadsEfc") || 0) +
+    (watch("finance.supervisionesEfc") || 0);
 
   return (
     <div className="space-y-6">
@@ -230,6 +232,28 @@ export function StepFinance({ form }: StepFinanceProps) {
             <input
               type="number"
               {...register("finance.overheadsEfc", { valueAsNumber: true })}
+              placeholder="0"
+              className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600">
+              Supervisiones — Presupuesto ({currency})
+            </label>
+            <input
+              type="number"
+              {...register("finance.supervisionesBudgeted", { valueAsNumber: true })}
+              placeholder="0"
+              className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600">
+              Supervisiones — EFC ({currency})
+            </label>
+            <input
+              type="number"
+              {...register("finance.supervisionesEfc", { valueAsNumber: true })}
               placeholder="0"
               className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
             />

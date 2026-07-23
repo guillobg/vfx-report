@@ -48,6 +48,8 @@ export function ReportForm() {
         assetsEfc: 0,
         overheadsBudgeted: 0,
         overheadsEfc: 0,
+        supervisionesBudgeted: 0,
+        supervisionesEfc: 0,
       },
       shots: {
         episodes: [],

@@ -153,10 +153,10 @@ export async function createFinanceRecords(
   reportId: string,
   records: Array<{
     episodeReel: string;
+    category?: string;
     cutStatus?: string;
     budgetedCost: number;
     efc: number;
-    earlyTurnoverDate?: string;
     vfxTurnoverDate?: string;
     vfxDeliveryDate?: string;
     notes?: string;
@@ -178,6 +178,7 @@ export async function createFinanceRecords(
             fields: {
               Report: [reportId],
               ...(isEpisode ? { "Episode / Reel": r.episodeReel } : {}),
+              ...(r.category ? { Category: r.category } : {}),
               ...(r.cutStatus ? { "Cut Status": r.cutStatus } : {}),
               "Budgeted Cost": r.budgetedCost || 0,
               EFC: r.efc || 0,
