@@ -118,19 +118,6 @@ export function StepShots({ form }: StepShotsProps) {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600">
-                    Budgeted Count
-                  </label>
-                  <input
-                    type="number"
-                    {...register(`shots.episodes.${index}.budgetedCount`, {
-                      valueAsNumber: true,
-                    })}
-                    placeholder="0"
-                    className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-600">
                     Bidding
                   </label>
                   <input
