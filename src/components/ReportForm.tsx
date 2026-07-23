@@ -89,7 +89,7 @@ export function ReportForm() {
     if (!project) return;
 
     const isMovie = project.type === "Movies";
-    const count = isMovie ? 5 : project.numEpisodes || 4;
+    const count = isMovie ? 5 : Math.min(project.numEpisodes || 4, 4);
     const prefix = isMovie ? "REEL" : "EPISODE";
 
     // Only pre-populate if episodes are empty
