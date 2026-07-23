@@ -100,17 +100,6 @@ export function StepFinance({ form }: StepFinanceProps) {
 
               <div>
                 <label className="block text-xs font-medium text-gray-600">
-                  Early Turnover Date
-                </label>
-                <input
-                  type="date"
-                  {...register(`finance.episodes.${index}.earlyTurnoverDate`)}
-                  className="mt-1 block w-full rounded border-gray-300 text-sm py-1.5 px-2 border"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-gray-600">
                   VFX Turnover Date
                 </label>
                 <input
