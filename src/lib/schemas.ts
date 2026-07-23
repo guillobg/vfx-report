@@ -1,12 +1,9 @@
 import { z } from "zod";
 
 export const CUT_STATUS_OPTIONS = [
-  "Shooting Script",
-  "Assembly",
   "AC1",
   "AC2",
   "AC3",
-  "Fine Cut",
   "Picture Lock",
 ] as const;
 
