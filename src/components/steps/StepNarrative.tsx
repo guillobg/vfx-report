@@ -2,6 +2,7 @@
 
 import { UseFormReturn } from "react-hook-form";
 import { FullReport } from "@/lib/schemas";
+import { formatCurrency } from "@/lib/utils";
 
 interface StepNarrativeProps {
   form: UseFormReturn<FullReport>;
@@ -10,8 +11,37 @@ interface StepNarrativeProps {
 export function StepNarrative({ form }: StepNarrativeProps) {
   const {
     register,
+    watch,
     formState: { errors },
   } = form;
+
+  // Watch data from previous steps for summary
+  const currency = (watch("metadata.currency") as "EUR" | "USD") || "EUR";
+  const financeEpisodes = watch("finance.episodes") || [];
+  const assetsBudgeted = watch("finance.assetsBudgeted") || 0;
+  const assetsEfc = watch("finance.assetsEfc") || 0;
+  const overheadsBudgeted = watch("finance.overheadsBudgeted") || 0;
+  const overheadsEfc = watch("finance.overheadsEfc") || 0;
+  const shotEpisodes = watch("shots.episodes") || [];
+
+  // Finance summary
+  const totalBudgeted =
+    financeEpisodes.reduce((sum, ep) => sum + (ep.budgetedCost || 0), 0) +
+    assetsBudgeted + overheadsBudgeted;
+  const totalEfc =
+    financeEpisodes.reduce((sum, ep) => sum + (ep.efc || 0), 0) +
+    assetsEfc + overheadsEfc;
+  const variance = totalBudgeted - totalEfc;
+
+  // Shots summary
+  const totalShots = shotEpisodes.reduce((sum, ep) => sum + (ep.bidding || 0), 0);
+  const totalInProgress = shotEpisodes.reduce((sum, ep) => sum + (ep.inProgress || 0), 0);
+  const totalDelivered = shotEpisodes.reduce((sum, ep) => sum + (ep.finalDelivered || 0), 0);
+  const totalOmit = shotEpisodes.reduce((sum, ep) => sum + (ep.omitCtd || 0), 0);
+  const totalOnHold = shotEpisodes.reduce((sum, ep) => sum + (ep.onHold || 0), 0);
+  const percentComplete = totalShots > 0
+    ? (((totalDelivered + totalOmit) / totalShots) * 100).toFixed(1)
+    : "0";
 
   return (
     <div className="space-y-6">
@@ -22,6 +52,62 @@ export function StepNarrative({ form }: StepNarrativeProps) {
         </p>
       </div>
 
+      {/* Data summary panel */}
+      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl p-5 space-y-4">
+        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+          📊 Resumen de datos introducidos
+        </h3>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {/* Finance */}
+          <div>
+            <p className="text-xs text-gray-400">Presupuesto Total</p>
+            <p className="text-sm font-bold">{formatCurrency(totalBudgeted, currency)}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">EFC Total</p>
+            <p className="text-sm font-bold">{formatCurrency(totalEfc, currency)}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">Varianza</p>
+            <p className={`text-sm font-bold ${variance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+              {formatCurrency(variance, currency)}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">Estado</p>
+            <p className={`text-sm font-bold ${variance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+              {variance >= 0 ? "Under budget" : "Over budget"}
+            </p>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-700 pt-3 grid grid-cols-2 sm:grid-cols-5 gap-4">
+          {/* Shots */}
+          <div>
+            <p className="text-xs text-gray-400">Total Shots</p>
+            <p className="text-sm font-bold">{totalShots}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">In Progress</p>
+            <p className="text-sm font-bold text-yellow-400">{totalInProgress}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">Delivered</p>
+            <p className="text-sm font-bold text-emerald-400">{totalDelivered}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">On Hold</p>
+            <p className="text-sm font-bold text-orange-400">{totalOnHold}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">% Completado</p>
+            <p className="text-sm font-bold text-blue-400">{percentComplete}%</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Narrative fields */}
       <div className="space-y-5">
         {/* Progress */}
         <div>
