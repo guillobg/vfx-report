@@ -25,8 +25,7 @@ export function StepReview({ form }: StepReviewProps) {
     (data.finance?.overheadsEfc || 0);
 
   const totalShots = data.shots?.episodes?.reduce(
-    (sum, ep) =>
-      sum + (ep.bidding || 0) + (ep.inProgress || 0) + (ep.finalDelivered || 0) + (ep.onHold || 0) + (ep.omitCtd || 0),
+    (sum, ep) => sum + (ep.bidding || 0),
     0
   ) || 0;
 

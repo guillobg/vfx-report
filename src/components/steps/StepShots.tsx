@@ -112,7 +112,7 @@ export function StepShots({ form }: StepShotsProps) {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600">
-                    Bidding
+                    Total Shots
                   </label>
                   <input
                     type="number"
