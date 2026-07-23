@@ -121,9 +121,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 5. Update the report with the view URL
+    const baseUrl = process.env.NEXTAUTH_URL || "https://vfx-report.vercel.app";
+    const reportUrl = `${baseUrl}/report/${reportId}`;
+    await fetch(
+      `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/tbldpQLs1Zh9vxTkr/${reportId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${process.env.AIRTABLE_API_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fields: { "Report URL": reportUrl } }),
+      }
+    );
+
     return NextResponse.json({
       success: true,
       reportId,
+      reportUrl,
       message: "Informe enviado correctamente",
     });
   } catch (error) {
