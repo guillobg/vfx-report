@@ -102,6 +102,61 @@ export function StepReview({ form }: StepReviewProps) {
         </div>
       </div>
 
+      {/* Shot tracking breakdown */}
+      <div className="bg-white border rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">🎯 Desglose de Shots por Capítulo</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left py-1 pr-2">Episodio/Bobina</th>
+                <th className="text-right py-1 pr-2">Total</th>
+                <th className="text-right py-1 pr-2">In Progress</th>
+                <th className="text-right py-1 pr-2">Delivered</th>
+                <th className="text-right py-1 pr-2">On Hold</th>
+                <th className="text-right py-1 pr-2">Omit</th>
+                <th className="text-right py-1">% Complete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.shots?.episodes?.map((ep, i) => {
+                const epTotal = ep.bidding || 0;
+                const epPercent = epTotal > 0
+                  ? (((ep.finalDelivered || 0) + (ep.omitCtd || 0)) / epTotal * 100).toFixed(1)
+                  : "0";
+                return (
+                  <tr key={i} className="border-b border-gray-100">
+                    <td className="py-1 pr-2">{ep.episodeReel}</td>
+                    <td className="py-1 pr-2 text-right font-medium">{epTotal}</td>
+                    <td className="py-1 pr-2 text-right text-yellow-600">{ep.inProgress || 0}</td>
+                    <td className="py-1 pr-2 text-right text-emerald-600">{ep.finalDelivered || 0}</td>
+                    <td className="py-1 pr-2 text-right text-orange-600">{ep.onHold || 0}</td>
+                    <td className="py-1 pr-2 text-right text-gray-500">{ep.omitCtd || 0}</td>
+                    <td className="py-1 text-right font-medium">{epPercent}%</td>
+                  </tr>
+                );
+              })}
+              {/* Totals row */}
+              <tr className="border-t-2 border-gray-300 font-bold">
+                <td className="py-1 pr-2">TOTAL</td>
+                <td className="py-1 pr-2 text-right">{totalShots}</td>
+                <td className="py-1 pr-2 text-right text-yellow-600">
+                  {data.shots?.episodes?.reduce((s, ep) => s + (ep.inProgress || 0), 0)}
+                </td>
+                <td className="py-1 pr-2 text-right text-emerald-600">{totalFinal}</td>
+                <td className="py-1 pr-2 text-right text-orange-600">
+                  {data.shots?.episodes?.reduce((s, ep) => s + (ep.onHold || 0), 0)}
+                </td>
+                <td className="py-1 pr-2 text-right text-gray-500">
+                  {data.shots?.episodes?.reduce((s, ep) => s + (ep.omitCtd || 0), 0)}
+                </td>
+                <td className="py-1 text-right">{percentComplete}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       {/* Narrative preview */}
       <div className="bg-white border rounded-lg p-4 space-y-3">
         <h3 className="text-sm font-semibold text-gray-700">📝 Informe Narrativo</h3>
