@@ -43,6 +43,18 @@ export function StepReview({ form }: StepReviewProps) {
         <p className="mt-1 text-sm text-gray-600">Revisa todos los datos antes de enviar</p>
       </div>
 
+      {/* Report header */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+        <div>
+          <p className="text-sm font-bold text-blue-900">{data.metadata?.projectCode || "—"}</p>
+          <p className="text-xs text-blue-700">VFX Status Report</p>
+        </div>
+        <div className="text-right">
+          <p className="text-xs text-blue-700">Week Ending</p>
+          <p className="text-sm font-bold text-blue-900">{data.metadata?.weekEnding || "—"}</p>
+        </div>
+      </div>
+
       {/* Summary cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="bg-white border rounded-lg p-4">
