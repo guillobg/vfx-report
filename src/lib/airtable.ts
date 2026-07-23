@@ -214,7 +214,7 @@ export async function createShotRecords(
   }
 
   for (const batch of batches) {
-    await fetch(`${BASE_URL}/${TABLES.shotTracking}`, {
+    const res = await fetch(`${BASE_URL}/${TABLES.shotTracking}`, {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -222,7 +222,6 @@ export async function createShotRecords(
           fields: {
             Report: [reportId],
             "Episode / Reel": r.episodeReel,
-            "Budgeted Count": r.budgetedCount,
             "Total Shots": r.bidding,
             "In Progress": r.inProgress,
             "Final Delivered": r.finalDelivered,
@@ -233,6 +232,10 @@ export async function createShotRecords(
         })),
       }),
     });
+    const result = await res.json();
+    if (result.error) {
+      console.error("Shot Tracking write error:", result.error);
+    }
     await rateLimitDelay();
   }
 }
