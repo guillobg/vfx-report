@@ -208,28 +208,28 @@ export default function ReportViewPage() {
 
           {report["Progress & Key Developments"] && (
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase">Progress & Key Developments</p>
+              <p className="text-sm font-bold text-gray-900 uppercase">Progress & Key Developments</p>
               <p className="text-sm text-gray-700 whitespace-pre-wrap mt-1">{report["Progress & Key Developments"]}</p>
             </div>
           )}
 
           {report["Finance Updates"] && (
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase">Finance Updates</p>
+              <p className="text-sm font-bold text-gray-900 uppercase">Finance Updates</p>
               <p className="text-sm text-gray-700 whitespace-pre-wrap mt-1">{report["Finance Updates"]}</p>
             </div>
           )}
 
           {report["Warnings"] && (
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase">Warnings</p>
+              <p className="text-sm font-bold text-gray-900 uppercase">Warnings</p>
               <p className="text-sm text-gray-700 whitespace-pre-wrap mt-1">{report["Warnings"]}</p>
             </div>
           )}
 
           {report["Noteworthy"] && (
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase">Noteworthy</p>
+              <p className="text-sm font-bold text-gray-900 uppercase">Noteworthy</p>
               <p className="text-sm text-gray-700 whitespace-pre-wrap mt-1">{report["Noteworthy"]}</p>
             </div>
           )}
