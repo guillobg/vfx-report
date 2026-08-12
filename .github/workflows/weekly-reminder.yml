@@ -1,0 +1,29 @@
+name: Weekly Report Reminder
+
+on:
+  schedule:
+    # Every Monday at 8:00 AM UTC (adjust for your timezone)
+    # For Spain (CET/CEST): 8:00 AM = 6:00 AM UTC (winter) or 6:00 AM UTC (summer)
+    - cron: '0 6 * * 1'
+  workflow_dispatch: # Allow manual trigger for testing
+
+jobs:
+  check-reports:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check missing reports and send reminders
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.APP_URL }}/api/cron/check-reports")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Cron job failed with status $HTTP_CODE"
+            exit 1
+          fi
