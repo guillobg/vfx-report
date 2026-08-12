@@ -12,7 +12,6 @@ import { Stepper } from "@/components/Stepper";
 import { StepMetadata } from "@/components/steps/StepMetadata";
 import { StepFinance } from "@/components/steps/StepFinance";
 import { StepShots } from "@/components/steps/StepShots";
-import { StepAssets } from "@/components/steps/StepAssets";
 import { StepNarrative } from "@/components/steps/StepNarrative";
 import { StepReview } from "@/components/steps/StepReview";
 import { ChevronLeft, ChevronRight, Send, Loader2 } from "lucide-react";
@@ -20,8 +19,7 @@ import { ChevronLeft, ChevronRight, Send, Loader2 } from "lucide-react";
 const STEPS = [
   "Proyecto",
   "Finanzas",
-  "Shots",
-  "Assets",
+  "Shots & Assets",
   "Narrativa",
   "Revisión",
 ];
@@ -188,10 +186,8 @@ export function ReportForm() {
       case 2:
         return <StepShots form={form} />;
       case 3:
-        return <StepAssets form={form} />;
-      case 4:
         return <StepNarrative form={form} />;
-      case 5:
+      case 4:
         return <StepReview form={form} />;
       default:
         return null;
