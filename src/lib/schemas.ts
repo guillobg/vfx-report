@@ -80,10 +80,10 @@ export const assetTrackingSchema = z.object({
 
 // Step 5: Narrative Sections
 export const narrativeSchema = z.object({
-  progress: z.string().optional(),
-  financeUpdates: z.string().optional(),
-  warnings: z.string().optional(),
-  noteworthy: z.string().optional(),
+  progress: z.string().min(1, "Este campo es obligatorio"),
+  financeUpdates: z.string().min(1, "Este campo es obligatorio"),
+  warnings: z.string().min(1, "Este campo es obligatorio"),
+  noteworthy: z.string().min(1, "Este campo es obligatorio"),
 });
 
 // Full form schema

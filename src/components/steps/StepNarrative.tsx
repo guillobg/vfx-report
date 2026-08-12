@@ -46,7 +46,7 @@ export function StepNarrative({ form }: StepNarrativeProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-gray-900">Informe Narrativo</h2>
+        <h2 className="text-xl font-bold text-gray-900">Informe Actualización Semanal</h2>
         <p className="mt-1 text-sm text-gray-600">
           Secciones cualitativas del informe semanal
         </p>
@@ -113,7 +113,7 @@ export function StepNarrative({ form }: StepNarrativeProps) {
         <div>
           <label htmlFor="progress" className="block text-sm font-medium text-gray-700">
             Progreso y Desarrollos Clave
-            <span className="text-xs text-gray-500 ml-1">(Progress & Key Developments)</span>
+            <span className="text-xs text-gray-500 ml-1">(Progress & Key Developments)</span><span className="text-red-500"> *</span>
           </label>
           <textarea
             id="progress"
@@ -131,7 +131,7 @@ export function StepNarrative({ form }: StepNarrativeProps) {
         <div>
           <label htmlFor="financeUpdates" className="block text-sm font-medium text-gray-700">
             Actualizaciones Financieras
-            <span className="text-xs text-gray-500 ml-1">(Finance Updates)</span>
+            <span className="text-xs text-gray-500 ml-1">(Finance Updates)</span><span className="text-red-500"> *</span>
           </label>
           <textarea
             id="financeUpdates"
@@ -140,13 +140,16 @@ export function StepNarrative({ form }: StepNarrativeProps) {
             placeholder="Contexto sobre cambios de presupuesto, varianzas, aprobaciones..."
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2 px-3 border"
           />
+          {errors.narrative?.financeUpdates && (
+            <p className="mt-1 text-sm text-red-600">{errors.narrative.financeUpdates.message}</p>
+          )}
         </div>
 
         {/* Warnings */}
         <div>
           <label htmlFor="warnings" className="block text-sm font-medium text-gray-700">
             Advertencias
-            <span className="text-xs text-gray-500 ml-1">(Warnings)</span>
+            <span className="text-xs text-gray-500 ml-1">(Warnings)</span><span className="text-red-500"> *</span>
           </label>
           <p className="text-xs text-gray-500 mt-0.5">
             Usa 🔴 Crítico / 🟠 Alto / 🟡 Medio para indicar severidad
@@ -158,13 +161,16 @@ export function StepNarrative({ form }: StepNarrativeProps) {
             placeholder="🟠 Retraso en entrega de vendor X por cambios solicitados..."
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2 px-3 border"
           />
+          {errors.narrative?.warnings && (
+            <p className="mt-1 text-sm text-red-600">{errors.narrative.warnings.message}</p>
+          )}
         </div>
 
         {/* Noteworthy */}
         <div>
           <label htmlFor="noteworthy" className="block text-sm font-medium text-gray-700">
             Notas Destacables
-            <span className="text-xs text-gray-500 ml-1">(Noteworthy)</span>
+            <span className="text-xs text-gray-500 ml-1">(Noteworthy)</span><span className="text-red-500"> *</span>
           </label>
           <textarea
             id="noteworthy"
@@ -173,6 +179,9 @@ export function StepNarrative({ form }: StepNarrativeProps) {
             placeholder="Notas históricas relevantes para referencia futura..."
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2 px-3 border"
           />
+          {errors.narrative?.noteworthy && (
+            <p className="mt-1 text-sm text-red-600">{errors.narrative.noteworthy.message}</p>
+          )}
         </div>
       </div>
     </div>
