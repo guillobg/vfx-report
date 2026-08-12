@@ -106,20 +106,28 @@ export function StepFinance({ form }: StepFinanceProps) {
                     />
                   </td>
                   <td className="py-1 px-2">
-                    <input
-                      type="number"
-                      {...register(`finance.episodes.${index}.budgetedCost`, { valueAsNumber: true })}
-                      placeholder="0"
-                      className="w-full rounded border-gray-300 text-xs py-1 px-1 border text-right"
-                    />
+                    <div className="relative">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        {...register(`finance.episodes.${index}.budgetedCost`, { valueAsNumber: true })}
+                        placeholder="0.00"
+                        className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-1 border text-right"
+                      />
+                    </div>
                   </td>
                   <td className="py-1 px-2">
-                    <input
-                      type="number"
-                      {...register(`finance.episodes.${index}.efc`, { valueAsNumber: true })}
-                      placeholder="0"
-                      className="w-full rounded border-gray-300 text-xs py-1 px-1 border text-right"
-                    />
+                    <div className="relative">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        {...register(`finance.episodes.${index}.efc`, { valueAsNumber: true })}
+                        placeholder="0.00"
+                        className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-1 border text-right"
+                      />
+                    </div>
                   </td>
                   <td className="py-1 px-2">
                     <input
@@ -185,58 +193,82 @@ export function StepFinance({ form }: StepFinanceProps) {
               <tr className="hover:bg-blue-50">
                 <td className="py-2 px-3 font-medium text-blue-800">Assets</td>
                 <td className="py-1 px-3">
-                  <input
-                    type="number"
-                    {...register("finance.assetsBudgeted", { valueAsNumber: true })}
-                    placeholder="0"
-                    className="w-full rounded border-gray-300 text-xs py-1 px-2 border text-right"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      {...register("finance.assetsBudgeted", { valueAsNumber: true })}
+                      placeholder="0.00"
+                      className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
+                    />
+                  </div>
                 </td>
                 <td className="py-1 px-3">
-                  <input
-                    type="number"
-                    {...register("finance.assetsEfc", { valueAsNumber: true })}
-                    placeholder="0"
-                    className="w-full rounded border-gray-300 text-xs py-1 px-2 border text-right"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      {...register("finance.assetsEfc", { valueAsNumber: true })}
+                      placeholder="0.00"
+                      className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
+                    />
+                  </div>
                 </td>
               </tr>
               <tr className="hover:bg-amber-50">
                 <td className="py-2 px-3 font-medium text-amber-800">Overheads & Labour</td>
                 <td className="py-1 px-3">
-                  <input
-                    type="number"
-                    {...register("finance.overheadsBudgeted", { valueAsNumber: true })}
-                    placeholder="0"
-                    className="w-full rounded border-gray-300 text-xs py-1 px-2 border text-right"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      {...register("finance.overheadsBudgeted", { valueAsNumber: true })}
+                      placeholder="0.00"
+                      className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
+                    />
+                  </div>
                 </td>
                 <td className="py-1 px-3">
-                  <input
-                    type="number"
-                    {...register("finance.overheadsEfc", { valueAsNumber: true })}
-                    placeholder="0"
-                    className="w-full rounded border-gray-300 text-xs py-1 px-2 border text-right"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      {...register("finance.overheadsEfc", { valueAsNumber: true })}
+                      placeholder="0.00"
+                      className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
+                    />
+                  </div>
                 </td>
               </tr>
               <tr className="hover:bg-purple-50">
                 <td className="py-2 px-3 font-medium text-purple-800">Supervisiones</td>
                 <td className="py-1 px-3">
-                  <input
-                    type="number"
-                    {...register("finance.supervisionesBudgeted", { valueAsNumber: true })}
-                    placeholder="0"
-                    className="w-full rounded border-gray-300 text-xs py-1 px-2 border text-right"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      {...register("finance.supervisionesBudgeted", { valueAsNumber: true })}
+                      placeholder="0.00"
+                      className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
+                    />
+                  </div>
                 </td>
                 <td className="py-1 px-3">
-                  <input
-                    type="number"
-                    {...register("finance.supervisionesEfc", { valueAsNumber: true })}
-                    placeholder="0"
-                    className="w-full rounded border-gray-300 text-xs py-1 px-2 border text-right"
-                  />
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      {...register("finance.supervisionesEfc", { valueAsNumber: true })}
+                      placeholder="0.00"
+                      className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
+                    />
+                  </div>
                 </td>
               </tr>
             </tbody>
