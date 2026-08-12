@@ -3,6 +3,7 @@
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { FullReport, CUT_STATUS_OPTIONS } from "@/lib/schemas";
 import { Plus, Trash2 } from "lucide-react";
+import { CurrencyInput } from "@/components/CurrencyInput";
 
 interface StepFinanceProps {
   form: UseFormReturn<FullReport>;
@@ -108,11 +109,10 @@ export function StepFinance({ form }: StepFinanceProps) {
                   <td className="py-1 px-2">
                     <div className="relative">
                       <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        {...register(`finance.episodes.${index}.budgetedCost`, { valueAsNumber: true })}
-                        placeholder="0.00"
+                      <CurrencyInput
+                        form={form}
+                        name={`finance.episodes.${index}.budgetedCost`}
+                        placeholder="0"
                         className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-1 border text-right"
                       />
                     </div>
@@ -120,11 +120,10 @@ export function StepFinance({ form }: StepFinanceProps) {
                   <td className="py-1 px-2">
                     <div className="relative">
                       <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        {...register(`finance.episodes.${index}.efc`, { valueAsNumber: true })}
-                        placeholder="0.00"
+                      <CurrencyInput
+                        form={form}
+                        name={`finance.episodes.${index}.efc`}
+                        placeholder="0"
                         className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-1 border text-right"
                       />
                     </div>
@@ -195,11 +194,10 @@ export function StepFinance({ form }: StepFinanceProps) {
                 <td className="py-1 px-3">
                   <div className="relative">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      {...register("finance.assetsBudgeted", { valueAsNumber: true })}
-                      placeholder="0.00"
+                    <CurrencyInput
+                      form={form}
+                      name="finance.assetsBudgeted"
+                      placeholder="0"
                       className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
                     />
                   </div>
@@ -207,11 +205,10 @@ export function StepFinance({ form }: StepFinanceProps) {
                 <td className="py-1 px-3">
                   <div className="relative">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      {...register("finance.assetsEfc", { valueAsNumber: true })}
-                      placeholder="0.00"
+                    <CurrencyInput
+                      form={form}
+                      name="finance.assetsEfc"
+                      placeholder="0"
                       className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
                     />
                   </div>
@@ -222,11 +219,10 @@ export function StepFinance({ form }: StepFinanceProps) {
                 <td className="py-1 px-3">
                   <div className="relative">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      {...register("finance.overheadsBudgeted", { valueAsNumber: true })}
-                      placeholder="0.00"
+                    <CurrencyInput
+                      form={form}
+                      name="finance.overheadsBudgeted"
+                      placeholder="0"
                       className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
                     />
                   </div>
@@ -234,11 +230,10 @@ export function StepFinance({ form }: StepFinanceProps) {
                 <td className="py-1 px-3">
                   <div className="relative">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      {...register("finance.overheadsEfc", { valueAsNumber: true })}
-                      placeholder="0.00"
+                    <CurrencyInput
+                      form={form}
+                      name="finance.overheadsEfc"
+                      placeholder="0"
                       className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
                     />
                   </div>
@@ -249,11 +244,10 @@ export function StepFinance({ form }: StepFinanceProps) {
                 <td className="py-1 px-3">
                   <div className="relative">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      {...register("finance.supervisionesBudgeted", { valueAsNumber: true })}
-                      placeholder="0.00"
+                    <CurrencyInput
+                      form={form}
+                      name="finance.supervisionesBudgeted"
+                      placeholder="0"
                       className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
                     />
                   </div>
@@ -261,11 +255,10 @@ export function StepFinance({ form }: StepFinanceProps) {
                 <td className="py-1 px-3">
                   <div className="relative">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400">€</span>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      {...register("finance.supervisionesEfc", { valueAsNumber: true })}
-                      placeholder="0.00"
+                    <CurrencyInput
+                      form={form}
+                      name="finance.supervisionesEfc"
+                      placeholder="0"
                       className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
                     />
                   </div>
