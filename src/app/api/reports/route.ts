@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 5. Update the report with the view URL
-    const baseUrl = process.env.NEXTAUTH_URL || "https://vfx-report.vercel.app";
+    const baseUrl = process.env.NEXTAUTH_URL || "https://main.dj7gpiydmt385.amplifyapp.com";
     const reportUrl = `${baseUrl}/report/${reportId}`;
     await fetch(
       `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/tbldpQLs1Zh9vxTkr/${reportId}`,
