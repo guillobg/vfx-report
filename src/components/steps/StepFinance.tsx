@@ -40,28 +40,17 @@ export function StepFinance({ form }: StepFinanceProps) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-bold text-gray-900">
-          Seguimiento Financiero
-        </h2>
-        <p className="mt-1 text-sm text-gray-600">
-          Overall Gross Tracking Cost
-        </p>
-      </div>
-
       {/* VFX Shots Table */}
-      <div className="border border-emerald-200 rounded-lg overflow-hidden">
-        <div className="bg-emerald-700 px-4 py-2">
-          <h4 className="text-xs font-bold text-white uppercase">VFX Shots — por Episodio / Bobina</h4>
+      <div className="border border-gray-200 rounded-lg overflow-hidden">
+        <div className="bg-slate-700 px-4 py-2">
+          <h4 className="text-xs font-bold text-white uppercase tracking-wide">VFX Shots — por Episodio / Bobina</h4>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
-            <thead className="bg-emerald-50 border-b border-emerald-200">
+            <thead className="bg-slate-50 border-b border-gray-200">
               <tr>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700 w-16">Ep.</th>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700">Cut Status</th>
-                <th className="text-left py-2 px-2 font-semibold text-gray-700">VFX Turnover</th>
-                <th className="text-left py-2 px-2 font-semibold text-gray-700">VFX Delivery</th>
                 <th className="text-right py-2 px-2 font-semibold text-gray-700">Budgeted Cost</th>
                 <th className="text-right py-2 px-2 font-semibold text-gray-700">EFC</th>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700">Notes</th>
@@ -91,20 +80,6 @@ export function StepFinance({ form }: StepFinanceProps) {
                         <option key={s} value={s}>{s}</option>
                       ))}
                     </select>
-                  </td>
-                  <td className="py-1 px-2">
-                    <input
-                      type="date"
-                      {...register(`finance.episodes.${index}.vfxTurnoverDate`)}
-                      className="w-full rounded border-gray-300 text-xs py-1 px-1 border"
-                    />
-                  </td>
-                  <td className="py-1 px-2">
-                    <input
-                      type="date"
-                      {...register(`finance.episodes.${index}.vfxDeliveryDate`)}
-                      className="w-full rounded border-gray-300 text-xs py-1 px-1 border"
-                    />
                   </td>
                   <td className="py-1 px-2">
                     <div className="relative">
@@ -159,15 +134,12 @@ export function StepFinance({ form }: StepFinanceProps) {
               append({
                 episodeReel: (fields.length + 1).toString().padStart(2, "0"),
                 cutStatus: "",
-                earlyTurnoverDate: "",
-                vfxTurnoverDate: "",
-                vfxDeliveryDate: "",
                 budgetedCost: 0,
                 efc: 0,
                 notes: "",
               })
             }
-            className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-emerald-700 bg-emerald-100 rounded hover:bg-emerald-200 transition-colors"
+            className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-slate-700 bg-slate-100 rounded hover:bg-slate-200 transition-colors"
           >
             <Plus size={12} /> Añadir fila
           </button>
@@ -270,25 +242,25 @@ export function StepFinance({ form }: StepFinanceProps) {
       </div>
 
       {/* Totals */}
-      <div className="bg-gray-900 text-white rounded-lg p-4">
+      <div className="bg-slate-200 border border-slate-300 text-slate-800 rounded-lg p-4">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <p className="text-xs text-gray-400">Total Presupuesto</p>
-            <p className="text-lg font-bold">
+            <p className="text-xs text-slate-500">Total Presupuesto</p>
+            <p className="text-lg font-bold text-slate-900">
               {totalBudgeted.toLocaleString()} {currency}
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Total EFC</p>
-            <p className="text-lg font-bold">
+            <p className="text-xs text-slate-500">Total EFC</p>
+            <p className="text-lg font-bold text-slate-900">
               {totalEfc.toLocaleString()} {currency}
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Varianza</p>
+            <p className="text-xs text-slate-500">Varianza</p>
             <p
               className={`text-lg font-bold ${
-                totalBudgeted - totalEfc >= 0 ? "text-emerald-400" : "text-red-400"
+                totalBudgeted - totalEfc >= 0 ? "text-emerald-600" : "text-red-500"
               }`}
             >
               {(totalBudgeted - totalEfc).toLocaleString()} {currency}

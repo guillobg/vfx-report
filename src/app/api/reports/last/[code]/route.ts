@@ -78,11 +78,8 @@ export async function GET(
       .map((f: any) => ({
         episodeReel: f["Episode / Reel"] || "",
         cutStatus: f["Cut Status"] || "",
-        vfxTurnoverDate: f["VFX Turnover Date"] || "",
-        vfxDeliveryDate: f["VFX Delivery Date"] || "",
         budgetedCost: f["Budgeted Cost"] || 0,
         efc: 0, // weekly — blank
-        earlyTurnoverDate: "",
         notes: "",
       }));
 

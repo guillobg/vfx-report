@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
-import { WeeklyReport } from "@/lib/airtable";
+import { WeeklyReport, Project } from "@/lib/airtable";
 import { formatDate } from "@/lib/utils";
 import {
   FileText,
@@ -11,6 +11,7 @@ import {
   LogOut,
   CheckCircle,
   LayoutDashboard,
+  Film,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -19,6 +20,7 @@ function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [reports, setReports] = useState<WeeklyReport[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
   const justSubmitted = searchParams.get("submitted") === "true";
@@ -45,8 +47,20 @@ function DashboardContent() {
       }
     }
 
+    async function fetchProjects() {
+      try {
+        const res = await fetch("/api/projects");
+        if (res.ok) {
+          setProjects(await res.json());
+        }
+      } catch (error) {
+        console.error("Failed to fetch projects:", error);
+      }
+    }
+
     if (status === "authenticated") {
       fetchReports();
+      fetchProjects();
     }
   }, [status]);
 
@@ -60,20 +74,26 @@ function DashboardContent() {
 
   if (!session) return null;
 
+  // Projects the user can access (admin sees all, coordinator sees assigned)
+  const activeProjects =
+    session.user.role === "admin"
+      ? projects
+      : projects.filter((p) => session.user.projects?.includes(p.code));
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-slate-800 border-b border-slate-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-9 h-9 bg-slate-600 rounded-lg flex items-center justify-center">
               <span className="text-xs font-bold text-white">VFX</span>
             </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900">
+              <h1 className="text-lg font-bold text-white">
                 VFX Status Reports
               </h1>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-slate-300">
                 {session.user.role === "admin"
                   ? "Vista Ejecutiva"
                   : "Panel del Coordinador"}
@@ -82,12 +102,12 @@ function DashboardContent() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600 hidden sm:block">
+            <span className="text-sm text-slate-200 hidden sm:block">
               {session.user.name}
             </span>
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-700 rounded-lg hover:bg-slate-600 transition-colors"
             >
               <LogOut size={14} /> Salir
             </button>
@@ -116,15 +136,51 @@ function DashboardContent() {
           </div>
         )}
 
+        {/* Active projects */}
+        <div className="mb-8">
+          <h2 className="text-base font-semibold text-slate-600 uppercase tracking-wide flex items-center gap-2 mb-4">
+            <Film size={18} />
+            Proyectos activos
+          </h2>
+          {activeProjects.length === 0 ? (
+            <div className="bg-white border border-gray-200 rounded-xl p-6 text-center text-sm text-gray-400">
+              No hay proyectos activos asignados.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {activeProjects.map((project) => (
+                <div
+                  key={project.code}
+                  className="bg-slate-200 border border-slate-300 rounded-xl p-4 flex items-center gap-3"
+                >
+                  <div className="w-11 h-11 rounded-lg bg-slate-700 flex items-center justify-center shrink-0">
+                    <span className="text-xs font-bold text-white">
+                      {project.code?.slice(0, 4) || "—"}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-slate-900 truncate">
+                      {project.code}
+                    </p>
+                    <p className="text-xs text-slate-600 truncate">
+                      {project.name || "—"}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Actions */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <LayoutDashboard size={20} />
-            VFX Weekly Status Reports
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base font-semibold text-slate-600 uppercase tracking-wide flex items-center gap-2">
+            <LayoutDashboard size={18} />
+            Weekly Status Reports
           </h2>
           <Link
             href="/report/new"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-500 rounded-lg hover:bg-emerald-600 transition-colors"
           >
             <Plus size={16} /> Nuevo Informe
           </Link>
@@ -136,12 +192,12 @@ function DashboardContent() {
             Cargando informes...
           </div>
         ) : reports.length === 0 ? (
-          <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+          <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg bg-white">
             <FileText size={48} className="mx-auto text-gray-300 mb-4" />
             <p className="text-gray-500 mb-4">No hay informes todavía</p>
             <Link
               href="/report/new"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors"
             >
               <Plus size={16} /> Crear primer informe
             </Link>
@@ -150,20 +206,20 @@ function DashboardContent() {
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-slate-50 border-b border-gray-200">
                   <tr>
-                    <th className="text-left text-xs font-medium text-gray-500 uppercase px-4 py-3">
+                    <th className="text-left text-xs font-semibold text-slate-500 uppercase px-4 py-3">
                       Report ID
                     </th>
                     {session.user.role === "admin" && (
-                      <th className="text-left text-xs font-medium text-gray-500 uppercase px-4 py-3">
+                      <th className="text-left text-xs font-semibold text-slate-500 uppercase px-4 py-3">
                         Enviado por
                       </th>
                     )}
-                    <th className="text-left text-xs font-medium text-gray-500 uppercase px-4 py-3">
+                    <th className="text-left text-xs font-semibold text-slate-500 uppercase px-4 py-3">
                       Semana
                     </th>
-                    <th className="text-left text-xs font-medium text-gray-500 uppercase px-4 py-3">
+                    <th className="text-right text-xs font-semibold text-slate-500 uppercase px-4 py-3">
                       Ver
                     </th>
                   </tr>
@@ -172,9 +228,9 @@ function DashboardContent() {
                   {reports.map((report) => (
                     <tr
                       key={report.id}
-                      className="hover:bg-gray-50 transition-colors"
+                      className="hover:bg-slate-50 transition-colors"
                     >
-                      <td className="px-4 py-3 text-sm font-medium text-blue-700">
+                      <td className="px-4 py-3 text-sm font-semibold text-slate-800">
                         {report.code && report.weekEnding
                           ? `${report.code}-${report.weekEnding}`
                           : report.code || "—"}
@@ -187,10 +243,10 @@ function DashboardContent() {
                       <td className="px-4 py-3 text-sm text-gray-900">
                         {formatDate(report.weekEnding)}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-right">
                         <Link
                           href={`/report/${report.id}`}
-                          className="text-xs font-medium text-blue-600 hover:text-blue-800 underline"
+                          className="inline-flex items-center gap-1 text-xs font-medium text-sky-600 hover:text-sky-800"
                         >
                           Ver informe →
                         </Link>

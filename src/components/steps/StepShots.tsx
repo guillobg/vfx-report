@@ -54,23 +54,14 @@ export function StepShots({ form }: StepShotsProps) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-bold text-gray-900">
-          Seguimiento de Shots & Assets
-        </h2>
-        <p className="mt-1 text-sm text-gray-600">
-          Overall Shot & Asset Tracking Status
-        </p>
-      </div>
-
       {/* ==================== SHOT TRACKING TABLE ==================== */}
-      <div className="border border-blue-200 rounded-lg overflow-hidden">
-        <div className="bg-blue-700 px-4 py-2">
-          <h4 className="text-xs font-bold text-white uppercase">Shot Tracking — por Episodio / Bobina</h4>
+      <div className="border border-gray-200 rounded-lg overflow-hidden">
+        <div className="bg-slate-700 px-4 py-2">
+          <h4 className="text-xs font-bold text-white uppercase tracking-wide">Shot Tracking — por Episodio / Bobina</h4>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
-            <thead className="bg-blue-50 border-b border-blue-200">
+            <thead className="bg-slate-50 border-b border-gray-200">
               <tr>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700 w-16">Ep.</th>
                 <th className="text-right py-2 px-2 font-semibold text-gray-700">Total Shots</th>
@@ -192,7 +183,7 @@ export function StepShots({ form }: StepShotsProps) {
                 notes: "",
               })
             }
-            className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded hover:bg-blue-200 transition-colors"
+            className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-slate-700 bg-slate-100 rounded hover:bg-slate-200 transition-colors"
           >
             <Plus size={12} /> Añadir fila
           </button>
@@ -200,13 +191,13 @@ export function StepShots({ form }: StepShotsProps) {
       </div>
 
       {/* ==================== ASSET TRACKING TABLE ==================== */}
-      <div className="border border-purple-200 rounded-lg overflow-hidden">
-        <div className="bg-purple-700 px-4 py-2">
-          <h4 className="text-xs font-bold text-white uppercase">Asset Tracking</h4>
+      <div className="border border-gray-200 rounded-lg overflow-hidden">
+        <div className="bg-slate-600 px-4 py-2">
+          <h4 className="text-xs font-bold text-white uppercase tracking-wide">Asset Tracking</h4>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
-            <thead className="bg-purple-50 border-b border-purple-200">
+            <thead className="bg-slate-50 border-b border-gray-200">
               <tr>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700">Asset Name</th>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700">Ep.</th>
@@ -316,7 +307,7 @@ export function StepShots({ form }: StepShotsProps) {
                 notes: "",
               })
             }
-            className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200 transition-colors"
+            className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-slate-700 bg-slate-100 rounded hover:bg-slate-200 transition-colors"
           >
             <Plus size={12} /> Añadir fila
           </button>
@@ -324,31 +315,31 @@ export function StepShots({ form }: StepShotsProps) {
       </div>
 
       {/* Summary bar */}
-      <div className="bg-gray-900 text-white rounded-lg p-4">
+      <div className="bg-slate-200 border border-slate-300 text-slate-800 rounded-lg p-4">
         <div className="grid grid-cols-2 sm:grid-cols-6 gap-4 text-center">
           <div>
-            <p className="text-xs text-gray-400">Total Shots</p>
-            <p className="text-lg font-bold">{totalCount}</p>
+            <p className="text-xs text-slate-500">Total Shots</p>
+            <p className="text-lg font-bold text-slate-900">{totalCount}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">In Progress</p>
-            <p className="text-lg font-bold text-yellow-400">{totals.inProgress}</p>
+            <p className="text-xs text-slate-500">In Progress</p>
+            <p className="text-lg font-bold text-amber-600">{totals.inProgress}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Delivered</p>
-            <p className="text-lg font-bold text-emerald-400">{totals.finalDelivered}</p>
+            <p className="text-xs text-slate-500">Delivered</p>
+            <p className="text-lg font-bold text-emerald-600">{totals.finalDelivered}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Shots %</p>
-            <p className="text-lg font-bold">{percentComplete}%</p>
+            <p className="text-xs text-slate-500">Shots %</p>
+            <p className="text-lg font-bold text-slate-900">{percentComplete}%</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Assets</p>
-            <p className="text-lg font-bold text-purple-400">{assets?.length || 0}</p>
+            <p className="text-xs text-slate-500">Assets</p>
+            <p className="text-lg font-bold text-slate-700">{assets?.length || 0}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Assets %</p>
-            <p className="text-lg font-bold text-purple-400">{assetAvg}%</p>
+            <p className="text-xs text-slate-500">Assets %</p>
+            <p className="text-lg font-bold text-slate-700">{assetAvg}%</p>
           </div>
         </div>
       </div>

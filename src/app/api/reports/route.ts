@@ -7,6 +7,8 @@ import {
   createFinanceRecords,
   createShotRecords,
   createAssetRecords,
+  upsertPmcVfxDates,
+  upsertKeyDates,
 } from "@/lib/airtable";
 import { fullReportSchema } from "@/lib/schemas";
 
@@ -66,15 +68,13 @@ export async function POST(request: NextRequest) {
     // 2. Create finance records (filter out empty ones)
     const financeRecords = [
       ...data.finance.episodes
-        .filter((ep) => ep.budgetedCost || ep.efc || ep.cutStatus || ep.vfxTurnoverDate || ep.vfxDeliveryDate)
+        .filter((ep) => ep.budgetedCost || ep.efc || ep.cutStatus)
         .map((ep) => ({
           episodeReel: ep.episodeReel,
           category: "VFX Shots",
           cutStatus: ep.cutStatus,
           budgetedCost: ep.budgetedCost,
           efc: ep.efc,
-          vfxTurnoverDate: ep.vfxTurnoverDate,
-          vfxDeliveryDate: ep.vfxDeliveryDate,
           notes: ep.notes,
         })),
       ...(data.finance.assetsBudgeted || data.finance.assetsEfc
@@ -138,6 +138,17 @@ export async function POST(request: NextRequest) {
           notes: a.notes,
         }))
       );
+    }
+
+    // 4b. Upsert project-level dates (PMC DATES + KEY DATES).
+    // These are keyed to the PROJECT, not the weekly report, and only touch
+    // rows the form owns (VFX Start / VFX Deadline). Manual PMC dates (PP Start,
+    // Launch, etc.) are never read or modified here.
+    if (data.calendar?.vfxCalendar?.length) {
+      await upsertPmcVfxDates(project.id, data.calendar.vfxCalendar);
+    }
+    if (data.calendar?.keyDates?.length) {
+      await upsertKeyDates(project.id, data.calendar.keyDates);
     }
 
     // 5. Update the report with the view URL

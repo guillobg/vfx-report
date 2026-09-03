@@ -24,13 +24,35 @@ export const reportMetadataSchema = z.object({
   currency: z.enum(CURRENCY_OPTIONS),
 });
 
+// Calendar and Key Dates
+// VFX Calendar row -> maps to PMC DATES table (Type = "VFX Start" / "VFX Deadline")
+export const vfxCalendarRowSchema = z.object({
+  episodeReel: z.string().min(1, "Requerido"),
+  vfxStartDate: z.string().optional(),
+  vfxDeadlineDate: z.string().optional(),
+  // Airtable record ids for upsert (empty = new). Not user-editable.
+  vfxStartRecordId: z.string().optional(),
+  vfxDeadlineRecordId: z.string().optional(),
+});
+
+// Key Date row -> maps to KEY DATES table (Type is free text)
+export const keyDateRowSchema = z.object({
+  category: z.string().optional(),
+  description: z.string().optional(),
+  date: z.string().optional(),
+  // Airtable record id for upsert (empty = new). Not user-editable.
+  recordId: z.string().optional(),
+});
+
+export const calendarSchema = z.object({
+  vfxCalendar: z.array(vfxCalendarRowSchema),
+  keyDates: z.array(keyDateRowSchema),
+});
+
 // Step 2: Finance Tracking
 export const financeEpisodeSchema = z.object({
   episodeReel: z.string().min(1, "Requerido"),
   cutStatus: z.string().optional(),
-  earlyTurnoverDate: z.string().optional(),
-  vfxTurnoverDate: z.string().optional(),
-  vfxDeliveryDate: z.string().optional(),
   budgetedCost: z.coerce.number().min(0).default(0),
   efc: z.coerce.number().min(0).default(0),
   notes: z.string().optional(),
@@ -89,6 +111,7 @@ export const narrativeSchema = z.object({
 // Full form schema
 export const fullReportSchema = z.object({
   metadata: reportMetadataSchema,
+  calendar: calendarSchema,
   finance: financeTrackingSchema,
   shots: shotTrackingSchema,
   assets: assetTrackingSchema,
@@ -96,6 +119,9 @@ export const fullReportSchema = z.object({
 });
 
 export type ReportMetadata = z.infer<typeof reportMetadataSchema>;
+export type VfxCalendarRow = z.infer<typeof vfxCalendarRowSchema>;
+export type KeyDateRow = z.infer<typeof keyDateRowSchema>;
+export type Calendar = z.infer<typeof calendarSchema>;
 export type FinanceEpisode = z.infer<typeof financeEpisodeSchema>;
 export type FinanceTracking = z.infer<typeof financeTrackingSchema>;
 export type ShotEpisode = z.infer<typeof shotEpisodeSchema>;

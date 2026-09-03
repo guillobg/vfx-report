@@ -45,64 +45,57 @@ export function StepNarrative({ form }: StepNarrativeProps) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-bold text-gray-900">Informe Actualización Semanal</h2>
-        <p className="mt-1 text-sm text-gray-600">
-          Secciones cualitativas del informe semanal
-        </p>
-      </div>
-
       {/* Data summary panel */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl p-5 space-y-4">
-        <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+      <div className="bg-slate-200 border border-slate-300 text-slate-800 rounded-xl p-5 space-y-4">
+        <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
           📊 Resumen de datos introducidos
         </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {/* Finance */}
           <div>
-            <p className="text-xs text-gray-400">Presupuesto Total</p>
-            <p className="text-sm font-bold">{formatCurrency(totalBudgeted, currency)}</p>
+            <p className="text-xs text-slate-500">Presupuesto Total</p>
+            <p className="text-sm font-bold text-slate-900">{formatCurrency(totalBudgeted, currency)}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">EFC Total</p>
-            <p className="text-sm font-bold">{formatCurrency(totalEfc, currency)}</p>
+            <p className="text-xs text-slate-500">EFC Total</p>
+            <p className="text-sm font-bold text-slate-900">{formatCurrency(totalEfc, currency)}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Varianza</p>
-            <p className={`text-sm font-bold ${variance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+            <p className="text-xs text-slate-500">Varianza</p>
+            <p className={`text-sm font-bold ${variance >= 0 ? "text-emerald-600" : "text-red-500"}`}>
               {formatCurrency(variance, currency)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Estado</p>
-            <p className={`text-sm font-bold ${variance >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+            <p className="text-xs text-slate-500">Estado</p>
+            <p className={`text-sm font-bold ${variance >= 0 ? "text-emerald-600" : "text-red-500"}`}>
               {variance >= 0 ? "Under budget" : "Over budget"}
             </p>
           </div>
         </div>
 
-        <div className="border-t border-gray-700 pt-3 grid grid-cols-2 sm:grid-cols-5 gap-4">
+        <div className="border-t border-slate-300 pt-3 grid grid-cols-2 sm:grid-cols-5 gap-4">
           {/* Shots */}
           <div>
-            <p className="text-xs text-gray-400">Total Shots</p>
-            <p className="text-sm font-bold">{totalShots}</p>
+            <p className="text-xs text-slate-500">Total Shots</p>
+            <p className="text-sm font-bold text-slate-900">{totalShots}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">In Progress</p>
-            <p className="text-sm font-bold text-yellow-400">{totalInProgress}</p>
+            <p className="text-xs text-slate-500">In Progress</p>
+            <p className="text-sm font-bold text-amber-600">{totalInProgress}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">Delivered</p>
-            <p className="text-sm font-bold text-emerald-400">{totalDelivered}</p>
+            <p className="text-xs text-slate-500">Delivered</p>
+            <p className="text-sm font-bold text-emerald-600">{totalDelivered}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">On Hold</p>
-            <p className="text-sm font-bold text-orange-400">{totalOnHold}</p>
+            <p className="text-xs text-slate-500">On Hold</p>
+            <p className="text-sm font-bold text-orange-500">{totalOnHold}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400">% Completado</p>
-            <p className="text-sm font-bold text-blue-400">{percentComplete}%</p>
+            <p className="text-xs text-slate-500">% Completado</p>
+            <p className="text-sm font-bold text-sky-600">{percentComplete}%</p>
           </div>
         </div>
       </div>
