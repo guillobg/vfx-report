@@ -80,6 +80,38 @@ function DashboardContent() {
       ? projects
       : projects.filter((p) => session.user.projects?.includes(p.code));
 
+  // Group by status (PHASE), alphabetical within each group.
+  // Groups are ordered following the project pipeline (not alphabetically).
+  const PHASE_ORDER = [
+    "DEVELOP",
+    "PREP",
+    "PRODUCTION",
+    "POST",
+    "DELIVERY /QC",
+    "PASS",
+    "ARCHIVAL",
+  ];
+  const phaseRank = (phase: string) => {
+    const i = PHASE_ORDER.indexOf(phase);
+    return i === -1 ? PHASE_ORDER.length : i; // unknown phases go last
+  };
+  const groupedProjects = Object.entries(
+    activeProjects.reduce<Record<string, Project[]>>((acc, p) => {
+      const phase = p.phase?.trim() || "Sin estado";
+      (acc[phase] ||= []).push(p);
+      return acc;
+    }, {})
+  )
+    .map(([phase, list]) => [
+      phase,
+      [...list].sort((a, b) => a.code.localeCompare(b.code)),
+    ] as [string, Project[]])
+    .sort((a, b) => {
+      const ra = phaseRank(a[0]);
+      const rb = phaseRank(b[0]);
+      return ra !== rb ? ra - rb : a[0].localeCompare(b[0]);
+    });
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -136,35 +168,48 @@ function DashboardContent() {
           </div>
         )}
 
-        {/* Active projects */}
+        {/* Active projects grouped by status */}
         <div className="mb-8">
           <h2 className="text-base font-semibold text-slate-600 uppercase tracking-wide flex items-center gap-2 mb-4">
             <Film size={18} />
-            Proyectos activos
+            Proyectos
           </h2>
           {activeProjects.length === 0 ? (
             <div className="bg-white border border-gray-200 rounded-xl p-6 text-center text-sm text-gray-400">
-              No hay proyectos activos asignados.
+              No hay proyectos asignados.
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {activeProjects.map((project) => (
-                <div
-                  key={project.code}
-                  className="bg-slate-200 border border-slate-300 rounded-xl p-4 flex items-center gap-3"
-                >
-                  <div className="w-11 h-11 rounded-lg bg-slate-700 flex items-center justify-center shrink-0">
-                    <span className="text-xs font-bold text-white">
-                      {project.code?.slice(0, 4) || "—"}
-                    </span>
+            <div className="space-y-6">
+              {groupedProjects.map(([phase, list]) => (
+                <div key={phase}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                      {phase}
+                    </h3>
+                    <span className="text-xs text-slate-400">({list.length})</span>
+                    <div className="flex-1 h-px bg-slate-200" />
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-slate-900 truncate">
-                      {project.code}
-                    </p>
-                    <p className="text-xs text-slate-600 truncate">
-                      {project.name || "—"}
-                    </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {list.map((project) => (
+                      <div
+                        key={project.code}
+                        className="bg-slate-200 border border-slate-300 rounded-xl p-4 flex items-center gap-3"
+                      >
+                        <div className="w-11 h-11 rounded-lg bg-slate-700 flex items-center justify-center shrink-0">
+                          <span className="text-xs font-bold text-white">
+                            {project.code?.slice(0, 4) || "—"}
+                          </span>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-slate-900 truncate">
+                            {project.code}
+                          </p>
+                          <p className="text-xs text-slate-600 truncate">
+                            {project.name || "—"}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}

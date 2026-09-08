@@ -64,7 +64,7 @@ export async function getActiveProjects(): Promise<Project[]> {
   url.searchParams.set("view", "viwqzp8n6jSD1YD0I");
   url.searchParams.set(
     "filterByFormula",
-    `AND({PHASE} != 'COMPLETE', {PHASE} != 'ARCHIVAL', {PHASE} != 'NEGOTIATING')`
+    `AND({PHASE} != 'COMPLETE', {PHASE} != 'NEGOTIATING')`
   );
   url.searchParams.set(
     "fields[]",
@@ -77,7 +77,7 @@ export async function getActiveProjects(): Promise<Project[]> {
     .join("&");
 
   const res = await fetch(
-    `${BASE_URL}/${TABLES.trackProjects}?view=viwqzp8n6jSD1YD0I&filterByFormula=${encodeURIComponent("AND({PHASE} != 'COMPLETE', {PHASE} != 'ARCHIVAL', {PHASE} != 'NEGOTIATING')")}&${fieldsParams}`,
+    `${BASE_URL}/${TABLES.trackProjects}?view=viwqzp8n6jSD1YD0I&filterByFormula=${encodeURIComponent("AND({PHASE} != 'COMPLETE', {PHASE} != 'NEGOTIATING')")}&${fieldsParams}`,
     { headers, next: { revalidate: 300 } }
   );
 
