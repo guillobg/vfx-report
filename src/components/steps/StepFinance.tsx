@@ -63,8 +63,13 @@ export function StepFinance({ form }: StepFinanceProps) {
                   <td className="py-1 px-2">
                     <select
                       {...register(`finance.episodes.${index}.episodeReel`)}
-                      className="w-full rounded border-gray-300 text-xs py-1 px-1 border"
+                      className={`w-full rounded text-xs py-1 px-1 border ${
+                        errors.finance?.episodes?.[index]?.episodeReel
+                          ? "border-red-400 bg-red-50"
+                          : "border-gray-300"
+                      }`}
                     >
+                      <option value="">—</option>
                       {["01","02","03","04","05","06","07","08"].map((v) => (
                         <option key={v} value={v}>{v}</option>
                       ))}

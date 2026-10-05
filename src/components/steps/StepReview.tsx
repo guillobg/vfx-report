@@ -128,6 +128,7 @@ export function StepReview({ form }: StepReviewProps) {
               <tr className="border-b">
                 <th className="text-left py-1 pr-2">Episodio/Bobina</th>
                 <th className="text-right py-1 pr-2">Total</th>
+                <th className="text-right py-1 pr-2">Queued</th>
                 <th className="text-right py-1 pr-2">In Progress</th>
                 <th className="text-right py-1 pr-2">Delivered</th>
                 <th className="text-right py-1 pr-2">On Hold</th>
@@ -145,6 +146,7 @@ export function StepReview({ form }: StepReviewProps) {
                   <tr key={i} className="border-b border-gray-100">
                     <td className="py-1 pr-2">{ep.episodeReel}</td>
                     <td className="py-1 pr-2 text-right font-medium">{epTotal}</td>
+                    <td className="py-1 pr-2 text-right text-sky-600">{ep.queued || 0}</td>
                     <td className="py-1 pr-2 text-right text-yellow-600">{ep.inProgress || 0}</td>
                     <td className="py-1 pr-2 text-right text-emerald-600">{ep.finalDelivered || 0}</td>
                     <td className="py-1 pr-2 text-right text-orange-600">{ep.onHold || 0}</td>
@@ -167,6 +169,9 @@ export function StepReview({ form }: StepReviewProps) {
               <tr className="border-t-2 border-gray-300 font-bold">
                 <td className="py-1 pr-2">TOTAL</td>
                 <td className="py-1 pr-2 text-right">{totalShots}</td>
+                <td className="py-1 pr-2 text-right text-sky-600">
+                  {data.shots?.episodes?.reduce((s, ep) => s + (ep.queued || 0), 0)}
+                </td>
                 <td className="py-1 pr-2 text-right text-yellow-600">
                   {data.shots?.episodes?.reduce((s, ep) => s + (ep.inProgress || 0), 0)}
                 </td>

@@ -37,9 +37,10 @@ export function StepShots({ form }: StepShotsProps) {
       finalDelivered: acc.finalDelivered + (ep.finalDelivered || 0),
       onHold: acc.onHold + (ep.onHold || 0),
       omitCtd: acc.omitCtd + (ep.omitCtd || 0),
+      queued: acc.queued + (ep.queued || 0),
     }),
-    { bidding: 0, inProgress: 0, finalDelivered: 0, onHold: 0, omitCtd: 0 }
-  ) || { bidding: 0, inProgress: 0, finalDelivered: 0, onHold: 0, omitCtd: 0 };
+    { bidding: 0, inProgress: 0, finalDelivered: 0, onHold: 0, omitCtd: 0, queued: 0 }
+  ) || { bidding: 0, inProgress: 0, finalDelivered: 0, onHold: 0, omitCtd: 0, queued: 0 };
 
   const totalCount = totals.bidding;
   const percentComplete =
@@ -65,6 +66,7 @@ export function StepShots({ form }: StepShotsProps) {
               <tr>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700 w-16">Ep.</th>
                 <th className="text-right py-2 px-2 font-semibold text-gray-700">Total Shots</th>
+                <th className="text-right py-2 px-2 font-semibold text-sky-700">Queued</th>
                 <th className="text-right py-2 px-2 font-semibold text-yellow-700">In Progress</th>
                 <th className="text-right py-2 px-2 font-semibold text-emerald-700">Delivered</th>
                 <th className="text-right py-2 px-2 font-semibold text-orange-700">On Hold</th>
@@ -87,8 +89,13 @@ export function StepShots({ form }: StepShotsProps) {
                     <td className="py-1 px-2">
                       <select
                         {...register(`shots.episodes.${index}.episodeReel`)}
-                        className="w-full rounded border-gray-300 text-xs py-1 px-1 border"
+                        className={`w-full rounded text-xs py-1 px-1 border ${
+                          errors.shots?.episodes?.[index]?.episodeReel
+                            ? "border-red-400 bg-red-50"
+                            : "border-gray-300"
+                        }`}
                       >
+                        <option value="">—</option>
                         {["01","02","03","04","05","06","07","08"].map((v) => (
                           <option key={v} value={v}>{v}</option>
                         ))}
@@ -100,6 +107,14 @@ export function StepShots({ form }: StepShotsProps) {
                         {...register(`shots.episodes.${index}.bidding`, { valueAsNumber: true })}
                         placeholder="0"
                         className="w-full rounded border-gray-300 text-xs py-1 px-1 border text-right font-medium"
+                      />
+                    </td>
+                    <td className="py-1 px-2">
+                      <input
+                        type="number"
+                        {...register(`shots.episodes.${index}.queued`, { valueAsNumber: true })}
+                        placeholder="0"
+                        className="w-full rounded border-sky-200 text-xs py-1 px-1 border text-right text-sky-700 bg-sky-50"
                       />
                     </td>
                     <td className="py-1 px-2">
@@ -157,6 +172,7 @@ export function StepShots({ form }: StepShotsProps) {
               <tr className="bg-gray-100 border-t-2 border-gray-300 font-bold">
                 <td className="py-2 px-2 text-xs">TOTAL</td>
                 <td className="py-2 px-2 text-xs text-right">{totalCount}</td>
+                <td className="py-2 px-2 text-xs text-right text-sky-700">{totals.queued}</td>
                 <td className="py-2 px-2 text-xs text-right text-yellow-700">{totals.inProgress}</td>
                 <td className="py-2 px-2 text-xs text-right text-emerald-700">{totals.finalDelivered}</td>
                 <td className="py-2 px-2 text-xs text-right text-orange-700">{totals.onHold}</td>
@@ -176,6 +192,7 @@ export function StepShots({ form }: StepShotsProps) {
                 episodeReel: (shotFields.length + 1).toString().padStart(2, "0"),
                 budgetedCount: 0,
                 bidding: 0,
+                queued: 0,
                 inProgress: 0,
                 finalDelivered: 0,
                 onHold: 0,
@@ -325,10 +342,14 @@ export function StepShots({ form }: StepShotsProps) {
 
       {/* Summary bar */}
       <div className="bg-slate-200 border border-slate-300 text-slate-800 rounded-lg p-4">
-        <div className="grid grid-cols-2 sm:grid-cols-6 gap-4 text-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 text-center">
           <div>
             <p className="text-xs text-slate-500">Total Shots</p>
             <p className="text-lg font-bold text-slate-900">{totalCount}</p>
+          </div>
+          <div>
+            <p className="text-xs text-slate-500">Queued</p>
+            <p className="text-lg font-bold text-sky-600">{totals.queued}</p>
           </div>
           <div>
             <p className="text-xs text-slate-500">In Progress</p>

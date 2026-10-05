@@ -169,6 +169,7 @@ export function ReportForm() {
           episodeReel: ep,
           budgetedCount: 0,
           bidding: 0,
+          queued: 0,
           inProgress: 0,
           finalDelivered: 0,
           onHold: 0,
@@ -290,17 +291,47 @@ export function ReportForm() {
   // so the user knows exactly where to look instead of a generic warning.
   const describeErrors = (): string => {
     const e = form.formState.errors;
-    const sections: string[] = [];
-    if (e.metadata) sections.push("Choose your Project");
-    if (e.calendar) sections.push("Calendar and Key Dates");
-    if (e.finance) sections.push("Financial Report");
-    if (e.shots) sections.push("Shot Tracking");
-    if (e.assets) sections.push("Shot Tracking (Assets)");
-    if (e.narrative) sections.push("Weekly Narrative");
-    if (sections.length === 0) {
+
+    const SECTION_LABELS: Record<string, string> = {
+      metadata: "Choose your Project",
+      calendar: "Calendar and Key Dates",
+      finance: "Financial Report",
+      shots: "Shot Tracking",
+      assets: "Assets",
+      narrative: "Weekly Narrative",
+    };
+
+    // Walk the react-hook-form error tree and collect "path: message" leaves.
+    const leaves: string[] = [];
+    const walk = (node: unknown, path: string[]) => {
+      if (!node || typeof node !== "object") return;
+      const obj = node as Record<string, unknown>;
+      if (typeof obj.message === "string" && obj.message) {
+        const top = path[0];
+        const label = SECTION_LABELS[top] || top;
+        const rest = path.slice(1).join(" › ");
+        leaves.push(rest ? `${label} (${rest}): ${obj.message}` : `${label}: ${obj.message}`);
+        return;
+      }
+      for (const key of Object.keys(obj)) {
+        if (key === "ref" || key === "type") continue;
+        walk(obj[key], [...path, key]);
+      }
+    };
+    walk(e, []);
+
+    if (leaves.length === 0) {
       return "Por favor revisa los campos obligatorios marcados en rojo";
     }
-    return `Revisa los campos marcados en rojo en: ${sections.join(", ")}`;
+    // De-duplicate and cap the list length for readability
+    const unique = Array.from(new Set(leaves));
+    const shown = unique.slice(0, 6);
+    const extra = unique.length - shown.length;
+    return (
+      "Faltan o son inválidos estos campos: " +
+      shown.join(" · ") +
+      (extra > 0 ? ` · (+${extra} más)` : "")
+    );
   };
 
   const handleGeneratePreview = async () => {

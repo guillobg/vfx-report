@@ -27,7 +27,7 @@ export const reportMetadataSchema = z.object({
 // Calendar and Key Dates
 // VFX Calendar row -> maps to PMC DATES table (Type = "VFX Start" / "VFX Deadline")
 export const vfxCalendarRowSchema = z.object({
-  episodeReel: z.string().min(1, "Requerido"),
+  episodeReel: z.string().optional(),
   vfxStartDate: z.string().optional(),
   vfxDeadlineDate: z.string().optional(),
   // Airtable record ids for upsert (empty = new). Not user-editable.
@@ -51,28 +51,63 @@ export const calendarSchema = z.object({
 
 // Step 2: Finance Tracking
 export const financeEpisodeSchema = z.object({
-  episodeReel: z.string().min(1, "Requerido"),
+  episodeReel: z.string().optional(),
   cutStatus: z.string().optional(),
   budgetedCost: z.coerce.number().min(0).default(0),
   efc: z.coerce.number().min(0).default(0),
   notes: z.string().optional(),
 });
 
-export const financeTrackingSchema = z.object({
-  episodes: z.array(financeEpisodeSchema).min(1, "Añade al menos un episodio/bobina"),
-  assetsBudgeted: z.coerce.number().min(0).default(0),
-  assetsEfc: z.coerce.number().min(0).default(0),
-  overheadsBudgeted: z.coerce.number().min(0).default(0),
-  overheadsEfc: z.coerce.number().min(0).default(0),
-  supervisionesBudgeted: z.coerce.number().min(0).default(0),
-  supervisionesEfc: z.coerce.number().min(0).default(0),
-});
+// A finance row has content if any meaningful field is filled.
+function financeRowHasContent(r: z.infer<typeof financeEpisodeSchema>): boolean {
+  return Boolean(
+    (r.cutStatus && r.cutStatus.trim()) ||
+      (r.budgetedCost && r.budgetedCost > 0) ||
+      (r.efc && r.efc > 0) ||
+      (r.notes && r.notes.trim())
+  );
+}
+
+export const financeTrackingSchema = z
+  .object({
+    episodes: z.array(financeEpisodeSchema),
+    assetsBudgeted: z.coerce.number().min(0).default(0),
+    assetsEfc: z.coerce.number().min(0).default(0),
+    overheadsBudgeted: z.coerce.number().min(0).default(0),
+    overheadsEfc: z.coerce.number().min(0).default(0),
+    supervisionesBudgeted: z.coerce.number().min(0).default(0),
+    supervisionesEfc: z.coerce.number().min(0).default(0),
+  })
+  .superRefine((data, ctx) => {
+    let contentRows = 0;
+    data.episodes.forEach((row, i) => {
+      const hasContent = financeRowHasContent(row);
+      if (hasContent) {
+        contentRows += 1;
+        if (!(row.episodeReel && row.episodeReel.trim())) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["episodes", i, "episodeReel"],
+            message: "Selecciona el episodio/bobina",
+          });
+        }
+      }
+    });
+    if (contentRows === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["episodes"],
+        message: "Añade al menos un episodio/bobina con datos",
+      });
+    }
+  });
 
 // Step 3: Shot Tracking
 export const shotEpisodeSchema = z.object({
-  episodeReel: z.string().min(1, "Requerido"),
+  episodeReel: z.string().optional(),
   budgetedCount: z.coerce.number().int().min(0).default(0),
   bidding: z.coerce.number().int().min(0).default(0),
+  queued: z.coerce.number().int().min(0).default(0),
   inProgress: z.coerce.number().int().min(0).default(0),
   finalDelivered: z.coerce.number().int().min(0).default(0),
   onHold: z.coerce.number().int().min(0).default(0),
@@ -80,9 +115,46 @@ export const shotEpisodeSchema = z.object({
   notes: z.string().optional(),
 });
 
-export const shotTrackingSchema = z.object({
-  episodes: z.array(shotEpisodeSchema).min(1, "Añade al menos un episodio/bobina"),
-});
+// A shot row has content if any count is > 0 or notes filled.
+function shotRowHasContent(r: z.infer<typeof shotEpisodeSchema>): boolean {
+  return Boolean(
+    (r.budgetedCount && r.budgetedCount > 0) ||
+      (r.bidding && r.bidding > 0) ||
+      (r.queued && r.queued > 0) ||
+      (r.inProgress && r.inProgress > 0) ||
+      (r.finalDelivered && r.finalDelivered > 0) ||
+      (r.onHold && r.onHold > 0) ||
+      (r.omitCtd && r.omitCtd > 0) ||
+      (r.notes && r.notes.trim())
+  );
+}
+
+export const shotTrackingSchema = z
+  .object({
+    episodes: z.array(shotEpisodeSchema),
+  })
+  .superRefine((data, ctx) => {
+    let contentRows = 0;
+    data.episodes.forEach((row, i) => {
+      if (shotRowHasContent(row)) {
+        contentRows += 1;
+        if (!(row.episodeReel && row.episodeReel.trim())) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["episodes", i, "episodeReel"],
+            message: "Selecciona el episodio/bobina",
+          });
+        }
+      }
+    });
+    if (contentRows === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["episodes"],
+        message: "Añade al menos un episodio/bobina con datos",
+      });
+    }
+  });
 
 // Step 4: Asset Tracking
 export const assetSchema = z

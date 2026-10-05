@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       ...data.finance.episodes
         .filter((ep) => ep.budgetedCost || ep.efc || ep.cutStatus)
         .map((ep) => ({
-          episodeReel: ep.episodeReel,
+          episodeReel: ep.episodeReel || "",
           category: "VFX Shots",
           cutStatus: ep.cutStatus,
           budgetedCost: ep.budgetedCost,
@@ -108,11 +108,12 @@ export async function POST(request: NextRequest) {
 
     // 3. Create shot tracking records (filter out empty ones)
     const shotRecords = data.shots.episodes
-      .filter((ep) => ep.bidding || ep.inProgress || ep.finalDelivered || ep.onHold || ep.omitCtd)
+      .filter((ep) => ep.bidding || ep.queued || ep.inProgress || ep.finalDelivered || ep.onHold || ep.omitCtd)
       .map((ep) => ({
-        episodeReel: ep.episodeReel,
+        episodeReel: ep.episodeReel || "",
         budgetedCount: ep.budgetedCount,
         bidding: ep.bidding,
+        queued: ep.queued,
         inProgress: ep.inProgress,
         finalDelivered: ep.finalDelivered,
         onHold: ep.onHold,

@@ -87,6 +87,7 @@ export async function GET(
       episodeReel: s["Episode / Reel"] || "",
       budgetedCount: 0,
       bidding: s["Total Shots"] || 0, // stable total
+      queued: 0, // weekly — blank
       inProgress: 0, // weekly — blank
       finalDelivered: 0, // weekly — blank
       onHold: 0, // weekly — blank

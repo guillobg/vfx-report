@@ -297,7 +297,7 @@ export async function getProjectKeyDates(
 export async function upsertPmcVfxDates(
   projectRecordId: string,
   rows: Array<{
-    episodeReel: string;
+    episodeReel?: string;
     vfxStartDate?: string;
     vfxDeadlineDate?: string;
     vfxStartRecordId?: string;
@@ -314,11 +314,14 @@ export async function upsertPmcVfxDates(
     recordId: string | undefined
   ) => {
     if (recordId) {
-      // Only PATCH when there is a value; empty means "leave as-is" (no delete).
+      // Existing record: only PATCH when there is a value; empty means
+      // "leave as-is" (no delete).
       if (date) {
         toUpdate.push({ id: recordId, fields: { Date: date } });
       }
-    } else if (date) {
+    } else if (date && ep) {
+      // New record: only create when we have both a date and an episode to
+      // key it to (a row without an episode can't be matched safely).
       toCreate.push({
         fields: {
           CODE: [projectRecordId],
@@ -332,8 +335,9 @@ export async function upsertPmcVfxDates(
   };
 
   for (const r of rows) {
-    queue(r.episodeReel, PMC_VFX_START, r.vfxStartDate, r.vfxStartRecordId);
-    queue(r.episodeReel, PMC_VFX_DEADLINE, r.vfxDeadlineDate, r.vfxDeadlineRecordId);
+    const ep = (r.episodeReel || "").trim();
+    queue(ep, PMC_VFX_START, r.vfxStartDate, r.vfxStartRecordId);
+    queue(ep, PMC_VFX_DEADLINE, r.vfxDeadlineDate, r.vfxDeadlineRecordId);
   }
 
   await batchWrite(TABLES.pmcDates, toCreate, toUpdate);
@@ -408,6 +412,7 @@ export async function createShotRecords(
     episodeReel: string;
     budgetedCount: number;
     bidding: number;
+    queued: number;
     inProgress: number;
     finalDelivered: number;
     onHold: number;
@@ -430,6 +435,7 @@ export async function createShotRecords(
             Report: [reportId],
             "Episode / Reel": r.episodeReel,
             "Total Shots": r.bidding,
+            "Queued Shots": r.queued,
             "In Progress": r.inProgress,
             "Final Delivered": r.finalDelivered,
             "On Hold": r.onHold,
