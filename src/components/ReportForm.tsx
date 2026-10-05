@@ -286,10 +286,27 @@ export function ReportForm() {
       ? projects
       : projects.filter((p) => session?.user?.projects?.includes(p.code));
 
+  // Build a specific message naming which sections have validation errors,
+  // so the user knows exactly where to look instead of a generic warning.
+  const describeErrors = (): string => {
+    const e = form.formState.errors;
+    const sections: string[] = [];
+    if (e.metadata) sections.push("Choose your Project");
+    if (e.calendar) sections.push("Calendar and Key Dates");
+    if (e.finance) sections.push("Financial Report");
+    if (e.shots) sections.push("Shot Tracking");
+    if (e.assets) sections.push("Shot Tracking (Assets)");
+    if (e.narrative) sections.push("Weekly Narrative");
+    if (sections.length === 0) {
+      return "Por favor revisa los campos obligatorios marcados en rojo";
+    }
+    return `Revisa los campos marcados en rojo en: ${sections.join(", ")}`;
+  };
+
   const handleGeneratePreview = async () => {
     const valid = await form.trigger();
     if (!valid) {
-      setSubmitError("Por favor revisa los campos obligatorios marcados en rojo");
+      setSubmitError(describeErrors());
       setShowPreview(false);
       return;
     }
@@ -304,7 +321,7 @@ export function ReportForm() {
   const handleSubmit = async () => {
     const valid = await form.trigger();
     if (!valid) {
-      setSubmitError("Por favor revisa los campos obligatorios marcados en rojo");
+      setSubmitError(describeErrors());
       return;
     }
 

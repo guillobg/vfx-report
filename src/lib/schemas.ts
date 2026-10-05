@@ -85,16 +85,37 @@ export const shotTrackingSchema = z.object({
 });
 
 // Step 4: Asset Tracking
-export const assetSchema = z.object({
-  assetName: z.string().min(1, "Nombre del asset requerido"),
-  episodes: z.string().optional(),
-  vendors: z.string().optional(),
-  status: z.string().optional(),
-  percentComplete: z.coerce.number().min(0).max(100).default(0),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
-  notes: z.string().optional(),
-});
+export const assetSchema = z
+  .object({
+    assetName: z.string().optional(),
+    episodes: z.string().optional(),
+    vendors: z.string().optional(),
+    status: z.string().optional(),
+    percentComplete: z.coerce.number().min(0).max(100).default(0),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+    notes: z.string().optional(),
+  })
+  .superRefine((row, ctx) => {
+    // A completely empty asset row is ignored (it won't be sent to Airtable).
+    // Only require a name when the user has entered other content on the row.
+    const hasOtherContent = Boolean(
+      (row.episodes && row.episodes.trim()) ||
+        (row.vendors && row.vendors.trim()) ||
+        (row.status && row.status.trim()) ||
+        (row.percentComplete && row.percentComplete > 0) ||
+        (row.startDate && row.startDate.trim()) ||
+        (row.endDate && row.endDate.trim()) ||
+        (row.notes && row.notes.trim())
+    );
+    if (hasOtherContent && !(row.assetName && row.assetName.trim())) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["assetName"],
+        message: "Nombre del asset requerido",
+      });
+    }
+  });
 
 export const assetTrackingSchema = z.object({
   assets: z.array(assetSchema),

@@ -224,8 +224,17 @@ export function StepShots({ form }: StepShotsProps) {
                     <input
                       {...register(`assets.assets.${index}.assetName`)}
                       placeholder="CG Dragon"
-                      className="w-full rounded border-gray-300 text-xs py-1 px-1 border"
+                      className={`w-full rounded text-xs py-1 px-1 border ${
+                        errors.assets?.assets?.[index]?.assetName
+                          ? "border-red-400 bg-red-50"
+                          : "border-gray-300"
+                      }`}
                     />
+                    {errors.assets?.assets?.[index]?.assetName && (
+                      <p className="mt-0.5 text-[10px] text-red-600">
+                        {errors.assets.assets[index]?.assetName?.message}
+                      </p>
+                    )}
                   </td>
                   <td className="py-1 px-2">
                     <input

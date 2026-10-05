@@ -123,12 +123,15 @@ export async function POST(request: NextRequest) {
       await createShotRecords(reportId, shotRecords);
     }
 
-    // 4. Create asset records
-    if (data.assets.assets.length > 0) {
+    // 4. Create asset records (skip rows without a name — e.g. blank/placeholder rows)
+    const assetRows = data.assets.assets.filter(
+      (a) => a.assetName && a.assetName.trim()
+    );
+    if (assetRows.length > 0) {
       await createAssetRecords(
         reportId,
-        data.assets.assets.map((a) => ({
-          assetName: a.assetName,
+        assetRows.map((a) => ({
+          assetName: (a.assetName || "").trim(),
           episodes: a.episodes || "",
           vendors: a.vendors || "",
           status: a.status,
