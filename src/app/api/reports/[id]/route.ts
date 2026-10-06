@@ -51,11 +51,39 @@ export async function GET(
       fetchRecordsByIds("tblIurs3ds5SN2o7e", assetIds),
     ]);
 
+    // Look up the project's LC Budget from Budget Tracking (one row per project).
+    // The "Presupuesto" KPI reads the official LC Budget, not the per-report
+    // budget figures entered in the finance table.
+    // Note: a formula FIND on ARRAYJOIN({Project}) matches the project's primary
+    // field (its name), not its record id — so we match the raw link array here.
+    let lcBudget: number | null = null;
+    const projectIds: string[] = fields["Project"] || [];
+    if (projectIds.length > 0) {
+      const projectId = projectIds[0];
+      const btRes = await fetch(
+        `https://api.airtable.com/v0/${BASE_ID}/tblhEDv5pRhIxMtMe?fields%5B%5D=${encodeURIComponent(
+          "LC Budget"
+        )}&fields%5B%5D=Project&maxRecords=200`,
+        { headers }
+      );
+      if (btRes.ok) {
+        const btData = await btRes.json();
+        const match = (btData.records || []).find(
+          (r: { fields: Record<string, unknown> }) =>
+            Array.isArray(r.fields["Project"]) &&
+            (r.fields["Project"] as string[]).includes(projectId)
+        );
+        const val = match?.fields?.["LC Budget"];
+        if (typeof val === "number") lcBudget = val;
+      }
+    }
+
     return NextResponse.json({
       report: fields,
       finance,
       shots,
       assets,
+      lcBudget,
     });
   } catch (error) {
     console.error("Error fetching report:", error);

@@ -9,6 +9,7 @@ interface ReportData {
   finance: Record<string, any>[];
   shots: Record<string, any>[];
   assets: Record<string, any>[];
+  lcBudget: number | null;
 }
 
 export default function ReportViewPage() {
@@ -49,13 +50,19 @@ export default function ReportViewPage() {
     );
   }
 
-  const { report, finance, shots, assets } = data;
+  const { report, finance, shots, assets, lcBudget } = data;
   const currency = (report["Currency"] as "EUR" | "USD") || "EUR";
   const code = report["CODE"]?.[0] || report["Report ID"]?.split("-")[0] || "";
 
   // Finance totals
   const totalBudgeted = finance.reduce((s, r) => s + (r["Budgeted Cost"] || 0), 0);
   const totalEfc = finance.reduce((s, r) => s + (r["EFC"] || 0), 0);
+
+  // "Presupuesto" KPI reads the project's official LC Budget from Budget
+  // Tracking. If the project has no LC Budget set, fall back to the per-report
+  // budget sum so the card still shows a value. Variance is budget − EFC.
+  const displayBudget = typeof lcBudget === "number" ? lcBudget : totalBudgeted;
+  const variance = displayBudget - totalEfc;
 
   // Shots totals
   const totalShots = shots.reduce((s, r) => s + (r["Total Shots"] || 0), 0);
@@ -85,7 +92,7 @@ export default function ReportViewPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div className="bg-white border rounded-lg p-4">
             <p className="text-xs text-gray-500">Presupuesto</p>
-            <p className="text-lg font-bold">{formatCurrency(totalBudgeted, currency)}</p>
+            <p className="text-lg font-bold">{formatCurrency(displayBudget, currency)}</p>
           </div>
           <div className="bg-white border rounded-lg p-4">
             <p className="text-xs text-gray-500">EFC</p>
@@ -93,8 +100,8 @@ export default function ReportViewPage() {
           </div>
           <div className="bg-white border rounded-lg p-4">
             <p className="text-xs text-gray-500">Varianza</p>
-            <p className={`text-lg font-bold ${totalBudgeted - totalEfc >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-              {formatCurrency(totalBudgeted - totalEfc, currency)}
+            <p className={`text-lg font-bold ${variance >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+              {formatCurrency(variance, currency)}
             </p>
           </div>
           <div className="bg-white border rounded-lg p-4">
