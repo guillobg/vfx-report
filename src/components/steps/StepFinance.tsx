@@ -7,9 +7,10 @@ import { CurrencyInput } from "@/components/CurrencyInput";
 
 interface StepFinanceProps {
   form: UseFormReturn<FullReport>;
+  lcBudget?: number | null;
 }
 
-export function StepFinance({ form }: StepFinanceProps) {
+export function StepFinance({ form, lcBudget }: StepFinanceProps) {
   const {
     register,
     control,
@@ -25,12 +26,17 @@ export function StepFinance({ form }: StepFinanceProps) {
   const currency = watch("metadata.currency") || "EUR";
   const episodes = watch("finance.episodes");
 
-  // Calculate totals
-  const totalBudgeted =
+  // Sum of budget figures entered line by line (fallback when the project
+  // has no official LC Budget yet).
+  const lineBudgetSum =
     (episodes?.reduce((sum, ep) => sum + (ep.budgetedCost || 0), 0) || 0) +
     (watch("finance.assetsBudgeted") || 0) +
     (watch("finance.overheadsBudgeted") || 0) +
     (watch("finance.supervisionesBudgeted") || 0);
+
+  // "Total Presupuesto" comes from the project's official LC Budget (Airtable).
+  const totalBudgeted =
+    typeof lcBudget === "number" ? lcBudget : lineBudgetSum;
 
   const totalEfc =
     (episodes?.reduce((sum, ep) => sum + (ep.efc || 0), 0) || 0) +

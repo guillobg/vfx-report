@@ -6,9 +6,10 @@ import { formatCurrency } from "@/lib/utils";
 
 interface StepNarrativeProps {
   form: UseFormReturn<FullReport>;
+  lcBudget?: number | null;
 }
 
-export function StepNarrative({ form }: StepNarrativeProps) {
+export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
   const {
     register,
     watch,
@@ -24,10 +25,12 @@ export function StepNarrative({ form }: StepNarrativeProps) {
   const overheadsEfc = watch("finance.overheadsEfc") || 0;
   const shotEpisodes = watch("shots.episodes") || [];
 
-  // Finance summary
-  const totalBudgeted =
+  // Finance summary — "Presupuesto Total" is the project's official LC Budget
+  // (Airtable), falling back to the sum of entered lines when unset.
+  const lineBudgetSum =
     financeEpisodes.reduce((sum, ep) => sum + (ep.budgetedCost || 0), 0) +
     assetsBudgeted + overheadsBudgeted;
+  const totalBudgeted = typeof lcBudget === "number" ? lcBudget : lineBudgetSum;
   const totalEfc =
     financeEpisodes.reduce((sum, ep) => sum + (ep.efc || 0), 0) +
     assetsEfc + overheadsEfc;

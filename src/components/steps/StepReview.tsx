@@ -6,18 +6,24 @@ import { formatCurrency } from "@/lib/utils";
 
 interface StepReviewProps {
   form: UseFormReturn<FullReport>;
+  lcBudget?: number | null;
 }
 
-export function StepReview({ form }: StepReviewProps) {
+export function StepReview({ form, lcBudget }: StepReviewProps) {
   const { watch } = form;
   const data = watch();
 
   const currency = (data.metadata?.currency as "EUR" | "USD") || "EUR";
 
-  const totalBudgeted =
+  const lineBudgetSum =
     (data.finance?.episodes?.reduce((sum, ep) => sum + (ep.budgetedCost || 0), 0) || 0) +
     (data.finance?.assetsBudgeted || 0) +
     (data.finance?.overheadsBudgeted || 0);
+
+  // "Presupuesto Total" is the project's official LC Budget (Airtable),
+  // falling back to the sum of entered lines when unset.
+  const totalBudgeted =
+    typeof lcBudget === "number" ? lcBudget : lineBudgetSum;
 
   const totalEfc =
     (data.finance?.episodes?.reduce((sum, ep) => sum + (ep.efc || 0), 0) || 0) +

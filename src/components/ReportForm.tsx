@@ -287,6 +287,11 @@ export function ReportForm() {
       ? projects
       : projects.filter((p) => session?.user?.projects?.includes(p.code));
 
+  // Official LC Budget of the selected project (from Airtable via /api/projects).
+  // Null until a project with a defined LC Budget is selected.
+  const selectedProject = projects.find((p) => p.code === selectedProjectCode);
+  const lcBudget = selectedProject?.lcBudget ?? null;
+
   // Build a specific message naming which sections have validation errors,
   // so the user knows exactly where to look instead of a generic warning.
   const describeErrors = (): string => {
@@ -439,7 +444,7 @@ export function ReportForm() {
         helpTitle="Presupuesto y EFC"
         helpBody="Introduce el coste presupuestado y el EFC por episodio, más las categorías de Assets, Overheads y Supervisiones. Los totales y la varianza se calculan automáticamente."
       >
-        <StepFinance form={form} />
+        <StepFinance form={form} lcBudget={lcBudget} />
       </Section>
 
       {/* 4. Shot Tracking */}
@@ -459,7 +464,7 @@ export function ReportForm() {
         helpTitle="Contexto del informe"
         helpBody="Explica el progreso, las actualizaciones financieras, las advertencias y las notas destacables. Estas secciones acompañan a los datos numéricos en el informe final."
       >
-        <StepNarrative form={form} />
+        <StepNarrative form={form} lcBudget={lcBudget} />
       </Section>
 
       {submitError && (
@@ -483,7 +488,7 @@ export function ReportForm() {
               <EyeOff size={14} /> Ocultar
             </button>
           </div>
-          <StepReview form={form} />
+          <StepReview form={form} lcBudget={lcBudget} />
         </div>
       )}
 
