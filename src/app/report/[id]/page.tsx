@@ -64,11 +64,47 @@ export default function ReportViewPage() {
   const displayBudget = typeof lcBudget === "number" ? lcBudget : totalBudgeted;
   const variance = displayBudget - totalEfc;
 
+  // Group finance records by Category for the final report (VFX Shots episodes
+  // are summed into a single row). Data is still stored individually in Airtable.
+  // All categories are always shown, even with 0 cost.
+  const CATEGORY_ORDER = ["VFX Shots", "Assets", "Overheads & Labour", "Supervisiones"];
+  const financeByCategory = (() => {
+    const map = new Map<string, { budget: number; efc: number }>();
+    // Seed every category so they always appear, even at 0.
+    for (const cat of CATEGORY_ORDER) map.set(cat, { budget: 0, efc: 0 });
+    for (const r of finance) {
+      const cat = (r["Category"] as string) || "Otros";
+      const acc = map.get(cat) || { budget: 0, efc: 0 };
+      acc.budget += r["Budgeted Cost"] || 0;
+      acc.efc += r["EFC"] || 0;
+      map.set(cat, acc);
+    }
+    const rows = Array.from(map.entries())
+      .map(([category, v]) => ({ category, budget: v.budget, efc: v.efc }))
+      .sort((a, b) => {
+        const ia = CATEGORY_ORDER.indexOf(a.category);
+        const ib = CATEGORY_ORDER.indexOf(b.category);
+        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+      });
+    const totalBudget = rows.reduce((s, r) => s + r.budget, 0);
+    const totalEfcCat = rows.reduce((s, r) => s + r.efc, 0);
+    return { rows, totalBudget, totalEfc: totalEfcCat };
+  })();
+
   // Shots totals
   const totalShots = shots.reduce((s, r) => s + (r["Total Shots"] || 0), 0);
   const totalDelivered = shots.reduce((s, r) => s + (r["Final Delivered"] || 0), 0);
   const totalOmit = shots.reduce((s, r) => s + (r["Omit CTD"] || 0), 0);
   const percentComplete = totalShots > 0 ? (((totalDelivered + totalOmit) / totalShots) * 100).toFixed(1) : "0";
+
+  // Shot rows sorted ascending by Episode/Reel for display.
+  const shotsSorted = [...shots].sort((a, b) =>
+    String(a["Episode / Reel"] || "").localeCompare(
+      String(b["Episode / Reel"] || ""),
+      undefined,
+      { numeric: true }
+    )
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -110,7 +146,7 @@ export default function ReportViewPage() {
           </div>
         </div>
 
-        {/* Finance Table */}
+        {/* Finance Table — grouped by Category (VFX Shots episodes are summed) */}
         <div className="bg-white border rounded-xl p-6 mb-6">
           <h2 className="text-sm font-semibold text-gray-700 mb-3">💰 Finance Tracking</h2>
           <div className="overflow-x-auto">
@@ -118,26 +154,31 @@ export default function ReportViewPage() {
               <thead>
                 <tr className="border-b text-gray-500">
                   <th className="text-left py-2 pr-2">Category</th>
-                  <th className="text-left py-2 pr-2">Episode/Reel</th>
-                  <th className="text-left py-2 pr-2">Cut Status</th>
                   <th className="text-right py-2 pr-2">Budget</th>
                   <th className="text-right py-2 pr-2">EFC</th>
                   <th className="text-right py-2">Variance</th>
                 </tr>
               </thead>
               <tbody>
-                {finance.map((r, i) => (
+                {financeByCategory.rows.map((row, i) => (
                   <tr key={i} className="border-b border-gray-50">
-                    <td className="py-2 pr-2 font-medium">{r["Category"] || "—"}</td>
-                    <td className="py-2 pr-2">{r["Episode / Reel"] || "—"}</td>
-                    <td className="py-2 pr-2">{r["Cut Status"] || "—"}</td>
-                    <td className="py-2 pr-2 text-right">{formatCurrency(r["Budgeted Cost"] || 0, currency)}</td>
-                    <td className="py-2 pr-2 text-right">{formatCurrency(r["EFC"] || 0, currency)}</td>
-                    <td className={`py-2 text-right ${(r["Budgeted Cost"] || 0) - (r["EFC"] || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                      {formatCurrency((r["Budgeted Cost"] || 0) - (r["EFC"] || 0), currency)}
+                    <td className="py-2 pr-2 font-medium">{row.category}</td>
+                    <td className="py-2 pr-2 text-right">{formatCurrency(row.budget, currency)}</td>
+                    <td className="py-2 pr-2 text-right">{formatCurrency(row.efc, currency)}</td>
+                    <td className={`py-2 text-right ${row.budget - row.efc >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                      {formatCurrency(row.budget - row.efc, currency)}
                     </td>
                   </tr>
                 ))}
+                {/* Totals row */}
+                <tr className="border-t-2 border-gray-300 font-bold">
+                  <td className="py-2 pr-2">TOTAL</td>
+                  <td className="py-2 pr-2 text-right">{formatCurrency(financeByCategory.totalBudget, currency)}</td>
+                  <td className="py-2 pr-2 text-right">{formatCurrency(financeByCategory.totalEfc, currency)}</td>
+                  <td className={`py-2 text-right ${financeByCategory.totalBudget - financeByCategory.totalEfc >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                    {formatCurrency(financeByCategory.totalBudget - financeByCategory.totalEfc, currency)}
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -152,6 +193,7 @@ export default function ReportViewPage() {
                 <tr className="border-b text-gray-500">
                   <th className="text-left py-2 pr-2">Episode/Reel</th>
                   <th className="text-right py-2 pr-2">Total</th>
+                  <th className="text-right py-2 pr-2">Queued</th>
                   <th className="text-right py-2 pr-2">In Progress</th>
                   <th className="text-right py-2 pr-2">Delivered</th>
                   <th className="text-right py-2 pr-2">On Hold</th>
@@ -160,13 +202,14 @@ export default function ReportViewPage() {
                 </tr>
               </thead>
               <tbody>
-                {shots.map((r, i) => {
+                {shotsSorted.map((r, i) => {
                   const st = r["Total Shots"] || 0;
                   const pct = st > 0 ? (((r["Final Delivered"] || 0) + (r["Omit CTD"] || 0)) / st * 100).toFixed(1) : "0";
                   return (
                     <tr key={i} className="border-b border-gray-50">
                       <td className="py-2 pr-2">{r["Episode / Reel"]}</td>
                       <td className="py-2 pr-2 text-right font-medium">{st}</td>
+                      <td className="py-2 pr-2 text-right text-sky-600">{r["Queued Shots"] || 0}</td>
                       <td className="py-2 pr-2 text-right text-yellow-600">{r["In Progress"] || 0}</td>
                       <td className="py-2 pr-2 text-right text-emerald-600">{r["Final Delivered"] || 0}</td>
                       <td className="py-2 pr-2 text-right text-orange-600">{r["On Hold"] || 0}</td>
