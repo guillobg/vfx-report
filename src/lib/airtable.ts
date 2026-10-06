@@ -30,6 +30,16 @@ async function rateLimitDelay() {
   await new Promise((resolve) => setTimeout(resolve, 220));
 }
 
+// LC Budget is a lookup field in Track Projects, so it comes back as an array
+// (e.g. [1075450]). Return the first numeric value, or null if unset.
+function readLookupNumber(value: unknown): number | null {
+  if (Array.isArray(value)) {
+    const n = value.find((v) => typeof v === "number");
+    return typeof n === "number" ? n : null;
+  }
+  return typeof value === "number" ? value : null;
+}
+
 // --- Types ---
 
 export interface Project {
@@ -42,6 +52,7 @@ export interface Project {
   numEpisodes: number;
   vfxVendors: string[];
   supervisor: string;
+  lcBudget: number | null;
 }
 
 export interface WeeklyReport {
@@ -72,7 +83,7 @@ export async function getActiveProjects(): Promise<Project[]> {
   );
 
   // Fetch with multiple fields
-  const fieldsParams = ["CODE", "PROJECT", "Territory", "PHASE", "TYPE", "Num. Episode", "VENDORS IMPLICADOS", "VFX / Post Supervisor (ProdCo)"]
+  const fieldsParams = ["CODE", "PROJECT", "Territory", "PHASE", "TYPE", "Num. Episode", "VENDORS IMPLICADOS", "VFX / Post Supervisor (ProdCo)", "LC Budget"]
     .map((f) => `fields%5B%5D=${encodeURIComponent(f)}`)
     .join("&");
 
@@ -93,6 +104,7 @@ export async function getActiveProjects(): Promise<Project[]> {
     numEpisodes: r.fields["Num. Episode"] || 0,
     vfxVendors: r.fields["VENDORS IMPLICADOS"] || [],
     supervisor: r.fields["VFX / Post Supervisor (ProdCo)"] || "",
+    lcBudget: readLookupNumber(r.fields["LC Budget"]),
   }));
 }
 
@@ -116,6 +128,7 @@ export async function getProjectByCode(code: string): Promise<Project | null> {
     numEpisodes: r.fields["Num. Episode"] || 0,
     vfxVendors: r.fields["VENDORS IMPLICADOS"] || [],
     supervisor: r.fields["VFX / Post Supervisor (ProdCo)"] || "",
+    lcBudget: readLookupNumber(r.fields["LC Budget"]),
   };
 }
 
