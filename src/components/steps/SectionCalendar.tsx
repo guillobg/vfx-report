@@ -10,8 +10,18 @@ interface SectionCalendarProps {
 
 const EPISODE_OPTIONS = ["01", "02", "03", "04", "05", "06", "07", "08"];
 
+// Whole weeks from today until the VFX Deadline. Null if the deadline is
+// missing or invalid. Negative if the deadline has already passed.
+function weeksToDeliver(deadline?: string): number | null {
+  if (!deadline) return null;
+  const d = new Date(deadline).getTime();
+  if (Number.isNaN(d)) return null;
+  const now = Date.now();
+  return Math.round((d - now) / (1000 * 60 * 60 * 24 * 7));
+}
+
 export function SectionCalendar({ form }: SectionCalendarProps) {
-  const { register, control } = form;
+  const { register, control, watch } = form;
 
   const {
     fields: vfxFields,
@@ -38,16 +48,17 @@ export function SectionCalendar({ form }: SectionCalendarProps) {
           <table className="w-full text-xs">
             <thead className="bg-slate-50 border-b border-gray-200">
               <tr>
-                <th className="text-left py-2 px-3 font-semibold text-gray-700 w-24">Ep</th>
-                <th className="text-left py-2 px-3 font-semibold text-gray-700">VFX Start</th>
-                <th className="text-left py-2 px-3 font-semibold text-gray-700">VFX Deadline</th>
+                <th className="text-left py-2 px-3 font-semibold text-gray-700 w-16">Ep</th>
+                <th className="text-left py-2 px-2 font-semibold text-gray-700">VFX Start</th>
+                <th className="text-left py-2 px-2 font-semibold text-gray-700">VFX Deadline</th>
+                <th className="text-center py-2 px-2 font-semibold text-gray-700 w-20">Weeks to Deliver</th>
                 <th className="w-8"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {vfxFields.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="py-4 text-center text-gray-400 text-xs">
+                  <td colSpan={5} className="py-4 text-center text-gray-400 text-xs">
                     Selecciona un proyecto para cargar los episodios, o añade una fila.
                   </td>
                 </tr>
@@ -64,19 +75,27 @@ export function SectionCalendar({ form }: SectionCalendarProps) {
                       ))}
                     </select>
                   </td>
-                  <td className="py-1 px-3">
+                  <td className="py-1 px-2">
                     <input
                       type="date"
                       {...register(`calendar.vfxCalendar.${index}.vfxStartDate`)}
-                      className="w-full rounded border-gray-300 text-xs py-1 px-2 border"
+                      className="w-full rounded border-gray-300 text-xs py-1 px-1 border"
                     />
                   </td>
-                  <td className="py-1 px-3">
+                  <td className="py-1 px-2">
                     <input
                       type="date"
                       {...register(`calendar.vfxCalendar.${index}.vfxDeadlineDate`)}
-                      className="w-full rounded border-gray-300 text-xs py-1 px-2 border"
+                      className="w-full rounded border-gray-300 text-xs py-1 px-1 border"
                     />
+                  </td>
+                  <td className="py-1 px-2 text-center text-gray-700 font-medium">
+                    {(() => {
+                      const w = weeksToDeliver(
+                        watch(`calendar.vfxCalendar.${index}.vfxDeadlineDate`)
+                      );
+                      return w === null ? "—" : w;
+                    })()}
                   </td>
                   <td className="py-1 px-1">
                     <button
