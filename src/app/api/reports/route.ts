@@ -10,6 +10,7 @@ import {
   upsertPmcVfxDates,
   upsertKeyDates,
   updateProjectEfc,
+  upsertProjectShotSummary,
 } from "@/lib/airtable";
 import { fullReportSchema } from "@/lib/schemas";
 
@@ -168,6 +169,21 @@ export async function POST(request: NextRequest) {
       (data.finance.overheadsEfc || 0) +
       (data.finance.supervisionesEfc || 0);
     await updateProjectEfc(project.id, totalEfc);
+
+    // 4d. Upsert the project's row in the "Shots Tracking" summary table with
+    // the sum of this report's shot episodes (one row per project; latest wins).
+    const shotTotals = data.shots.episodes.reduce(
+      (acc, ep) => ({
+        totalShots: acc.totalShots + (ep.bidding || 0),
+        queued: acc.queued + (ep.queued || 0),
+        inProgress: acc.inProgress + (ep.inProgress || 0),
+        finalDelivered: acc.finalDelivered + (ep.finalDelivered || 0),
+        onHold: acc.onHold + (ep.onHold || 0),
+        omitCtd: acc.omitCtd + (ep.omitCtd || 0),
+      }),
+      { totalShots: 0, queued: 0, inProgress: 0, finalDelivered: 0, onHold: 0, omitCtd: 0 }
+    );
+    await upsertProjectShotSummary(project.id, shotTotals, data.metadata.weekEnding);
 
     // 5. Update the report with the view URL
     const baseUrl = process.env.NEXTAUTH_URL || "https://main.dj7gpiydmt385.amplifyapp.com";

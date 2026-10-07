@@ -11,6 +11,7 @@ const TABLES = {
   pmcDates: "tblGkS3S5obVTy6NV",
   keyDates: "tblTMJn9V1uUW09XS",
   budgetTracking: "tblhEDv5pRhIxMtMe",
+  shotSummary: "tbl2k7vNJmHIzhaUC",
 };
 
 // Type values in PMC DATES that the report form owns (reads + writes).
@@ -455,6 +456,67 @@ export async function updateProjectEfc(
   const patchResult = await patch.json();
   if (patchResult.error) {
     console.error("updateProjectEfc: PATCH error:", patchResult.error);
+  }
+}
+
+// Upsert the project's row in the "Shots Tracking" summary table with the
+// latest report's totals (one row per project; the latest report wins).
+// Creates the row if the project doesn't have one yet, so manually-entered
+// rows get overwritten once coordinators start reporting via the app.
+export async function upsertProjectShotSummary(
+  projectRecordId: string,
+  totals: {
+    totalShots: number;
+    queued: number;
+    inProgress: number;
+    finalDelivered: number;
+    onHold: number;
+    omitCtd: number;
+  },
+  weekEnding?: string
+): Promise<void> {
+  const fields: Record<string, unknown> = {
+    "Total Shots": totals.totalShots,
+    "Queued Shots": totals.queued,
+    "In Progress": totals.inProgress,
+    "Final Delivered": totals.finalDelivered,
+    "On Hold": totals.onHold,
+    "Omit CTD": totals.omitCtd,
+    ...(weekEnding ? { "Last Week Ending": weekEnding } : {}),
+  };
+
+  // Find an existing row for the project (match the raw Project link array).
+  const res = await fetch(
+    `${BASE_URL}/${TABLES.shotSummary}?fields%5B%5D=Project&maxRecords=500`,
+    { headers, cache: "no-store" }
+  );
+  const data = await res.json();
+  if (data.error) {
+    console.error("upsertProjectShotSummary read error:", data.error);
+    return;
+  }
+  const match = (data.records || []).find(
+    (r: { id: string; fields: Record<string, unknown> }) =>
+      Array.isArray(r.fields["Project"]) &&
+      (r.fields["Project"] as string[]).includes(projectRecordId)
+  );
+
+  if (match) {
+    const patch = await fetch(`${BASE_URL}/${TABLES.shotSummary}/${match.id}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ fields }),
+    });
+    const result = await patch.json();
+    if (result.error) console.error("upsertProjectShotSummary PATCH error:", result.error);
+  } else {
+    const post = await fetch(`${BASE_URL}/${TABLES.shotSummary}`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ fields: { Project: [projectRecordId], ...fields } }),
+    });
+    const result = await post.json();
+    if (result.error) console.error("upsertProjectShotSummary POST error:", result.error);
   }
 }
 
