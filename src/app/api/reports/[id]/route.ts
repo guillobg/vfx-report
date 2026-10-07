@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getProjectByCode } from "@/lib/airtable";
+import { getProjectByCode, getProjectVfxDates } from "@/lib/airtable";
 
 const AIRTABLE_TOKEN = process.env.AIRTABLE_API_TOKEN!;
 const BASE_ID = process.env.AIRTABLE_BASE_ID!;
@@ -58,9 +58,22 @@ export async function GET(
     let lcBudget: number | null = null;
     const projectCode =
       fields["CODE"]?.[0] || (fields["Report ID"] as string)?.split("-")[0] || "";
+    const vfxDeadlines: Record<string, string> = {};
     if (projectCode) {
       const project = await getProjectByCode(projectCode);
       lcBudget = project?.lcBudget ?? null;
+      // Map episode -> VFX Deadline date from PMC DATES (current project dates),
+      // so the Shot Tracking table can show each episode's deadline.
+      try {
+        const dates = await getProjectVfxDates(projectCode);
+        for (const d of dates) {
+          if (d.episodeReel && d.vfxDeadlineDate) {
+            vfxDeadlines[d.episodeReel] = d.vfxDeadlineDate;
+          }
+        }
+      } catch (e) {
+        console.error("getProjectVfxDates failed:", e);
+      }
     }
 
     return NextResponse.json({
@@ -69,6 +82,7 @@ export async function GET(
       shots,
       assets,
       lcBudget,
+      vfxDeadlines,
     });
   } catch (error) {
     console.error("Error fetching report:", error);

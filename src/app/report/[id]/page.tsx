@@ -10,6 +10,7 @@ interface ReportData {
   shots: Record<string, any>[];
   assets: Record<string, any>[];
   lcBudget: number | null;
+  vfxDeadlines: Record<string, string>;
 }
 
 export default function ReportViewPage() {
@@ -50,7 +51,7 @@ export default function ReportViewPage() {
     );
   }
 
-  const { report, finance, shots, assets, lcBudget } = data;
+  const { report, finance, shots, assets, lcBudget, vfxDeadlines } = data;
   const currency = (report["Currency"] as "EUR" | "USD") || "EUR";
   const code = report["CODE"]?.[0] || report["Report ID"]?.split("-")[0] || "";
 
@@ -192,6 +193,7 @@ export default function ReportViewPage() {
               <thead>
                 <tr className="border-b text-gray-500">
                   <th className="text-left py-2 pr-2">Episode/Reel</th>
+                  <th className="text-left py-2 pr-2">VFX Deadline</th>
                   <th className="text-right py-2 pr-2">Total</th>
                   <th className="text-right py-2 pr-2">Queued</th>
                   <th className="text-right py-2 pr-2">In Progress</th>
@@ -208,6 +210,11 @@ export default function ReportViewPage() {
                   return (
                     <tr key={i} className="border-b border-gray-50">
                       <td className="py-2 pr-2">{r["Episode / Reel"]}</td>
+                      <td className="py-2 pr-2">
+                        {vfxDeadlines[String(r["Episode / Reel"] || "")]
+                          ? formatDate(vfxDeadlines[String(r["Episode / Reel"] || "")])
+                          : "—"}
+                      </td>
                       <td className="py-2 pr-2 text-right font-medium">{st}</td>
                       <td className="py-2 pr-2 text-right text-sky-600">{r["Queued Shots"] || 0}</td>
                       <td className="py-2 pr-2 text-right text-yellow-600">{r["In Progress"] || 0}</td>
