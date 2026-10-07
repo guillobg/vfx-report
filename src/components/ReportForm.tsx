@@ -45,7 +45,7 @@ function InfoPopover({ title, body }: { title: string; body: string }) {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        aria-label={`Más información: ${title}`}
+        aria-label={`More info: ${title}`}
         aria-expanded={open}
         className="inline-flex items-center justify-center w-6 h-6 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
       >
@@ -83,6 +83,7 @@ function Section({
   helpTitle,
   helpBody,
   headerRight,
+  tone = "slate",
   children,
 }: {
   title: string;
@@ -90,10 +91,19 @@ function Section({
   helpTitle?: string;
   helpBody?: string;
   headerRight?: ReactNode;
+  tone?: "slate" | "sky" | "emerald" | "amber" | "violet";
   children: ReactNode;
 }) {
+  // Soft, non-distracting section backgrounds + matching borders.
+  const TONES: Record<string, string> = {
+    slate: "bg-slate-50 border-slate-200",
+    sky: "bg-sky-50/60 border-sky-100",
+    emerald: "bg-emerald-50/60 border-emerald-100",
+    amber: "bg-amber-50/60 border-amber-100",
+    violet: "bg-violet-50/60 border-violet-100",
+  };
   return (
-    <section className="bg-gray-50 rounded-xl border border-gray-200 p-6 sm:p-8">
+    <section className={`${TONES[tone]} rounded-xl border p-6 sm:p-8`}>
       <div className="border-b border-gray-200 pb-4 mb-6 flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -371,16 +381,16 @@ export function ReportForm() {
     walk(e, []);
 
     if (leaves.length === 0) {
-      return "Por favor revisa los campos obligatorios marcados en rojo";
+      return "Please review the required fields marked in red";
     }
     // De-duplicate and cap the list length for readability
     const unique = Array.from(new Set(leaves));
     const shown = unique.slice(0, 6);
     const extra = unique.length - shown.length;
     return (
-      "Faltan o son inválidos estos campos: " +
+      "Missing or invalid fields: " +
       shown.join(" · ") +
-      (extra > 0 ? ` · (+${extra} más)` : "")
+      (extra > 0 ? ` · (+${extra} more)` : "")
     );
   };
 
@@ -432,7 +442,7 @@ export function ReportForm() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-8">
       {prefillLoading && (
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-2">
           <Loader2 size={16} className="animate-spin text-blue-600" />
@@ -443,7 +453,7 @@ export function ReportForm() {
       {prefillInfo && (
         <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
           <p className="text-sm text-emerald-800">
-            💡 Datos precargados del informe anterior (semana{" "}
+            💡 Data prefilled from the previous report (week{" "}
             <strong>{prefillInfo.lastWeekEnding}</strong>) y fechas del calendario del
             proyecto. Revisa y actualiza solo lo que haya cambiado esta semana.
           </p>
@@ -453,12 +463,13 @@ export function ReportForm() {
       {/* 1. Choose your Project */}
       <Section
         title="Choose your Project"
-        subtitle="Selecciona el proyecto del informe"
-        helpTitle="¿Cómo empezar?"
-        helpBody="Elige el proyecto: se cargarán automáticamente sus episodios/bobinas, las fechas del calendario y los datos del último informe para que solo actualices lo que cambió."
+        tone="sky"
+        subtitle="Select the report's project"
+        helpTitle="How to start?"
+        helpBody="Pick the project: its episodes/reels, calendar dates and last report data load automatically so you only update what changed."
         headerRight={
           <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wide">Fecha del informe</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Report date</p>
             <p className="text-sm font-semibold text-gray-700">
               {new Date().toLocaleDateString("es-ES", {
                 day: "2-digit",
@@ -475,9 +486,10 @@ export function ReportForm() {
       {/* 2. Calendar and Key Dates */}
       <Section
         title="Calendar and Key Dates"
+        tone="sky"
         subtitle="VFX Calendar y fechas clave del proyecto"
-        helpTitle="Fechas a nivel de proyecto"
-        helpBody="VFX Start / VFX Deadline se guardan por episodio en el calendario del proyecto. En Key Dates puedes anotar hitos como revisiones creativas o días de rodaje, con su categoría, descripción y fecha."
+        helpTitle="Project-level dates"
+        helpBody="VFX Start / VFX Deadline are saved per episode in the project calendar. In Key Dates you can note milestones such as creative reviews or shooting days, with their category, description and date."
       >
         <SectionCalendar form={form} />
       </Section>
@@ -485,9 +497,10 @@ export function ReportForm() {
       {/* 3. Financial Report */}
       <Section
         title="Financial Report"
+        tone="sky"
         subtitle="Overall Gross Tracking Cost"
-        helpTitle="Presupuesto y EFC"
-        helpBody="Introduce el coste presupuestado y el EFC por episodio, más las categorías de Assets, Overheads y Supervisiones. Los totales y la varianza se calculan automáticamente."
+        helpTitle="Budget and EFC"
+        helpBody="Enter the budgeted cost and EFC per episode, plus the Assets, Overheads and Supervisiones categories. Totals and variance are calculated automatically."
       >
         <StepFinance form={form} lcBudget={lcBudget} />
       </Section>
@@ -495,8 +508,9 @@ export function ReportForm() {
       {/* 4. Shot Tracking */}
       <Section
         title="Shot Tracking"
+        tone="sky"
         subtitle="Overall Shot & Asset Tracking Status"
-        helpTitle="Estado de shots y assets"
+        helpTitle="Shots and assets status"
         helpBody="Registra el estado semanal de los shots por episodio y el seguimiento de assets. El porcentaje de avance se calcula a partir de los entregados y omitidos."
       >
         <StepShots form={form} />
@@ -505,9 +519,10 @@ export function ReportForm() {
       {/* 5. Narrativa */}
       <Section
         title="Weekly Narrative"
+        tone="sky"
         subtitle="Secciones cualitativas del informe semanal"
         helpTitle="Contexto del informe"
-        helpBody="Explica el progreso, las actualizaciones financieras, las advertencias y las notas destacables. Estas secciones acompañan a los datos numéricos en el informe final."
+        helpBody="Describe the progress, finance updates, warnings and noteworthy items. These sections accompany the numeric data in the final report."
       >
         <StepNarrative form={form} lcBudget={lcBudget} />
       </Section>
@@ -523,7 +538,7 @@ export function ReportForm() {
         <div id="report-preview" className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
           <div className="flex items-center justify-between border-b border-gray-200 pb-3 mb-6">
             <h2 className="text-lg font-semibold text-gray-600 uppercase tracking-wide">
-              Previsualización del Informe
+              Report Preview
             </h2>
             <button
               type="button"
@@ -544,7 +559,7 @@ export function ReportForm() {
           onClick={handleGeneratePreview}
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
-          <Eye size={16} /> Generar previsualización
+          <Eye size={16} /> Generate preview
         </button>
         <button
           type="button"
@@ -558,7 +573,7 @@ export function ReportForm() {
             </>
           ) : (
             <>
-              <Send size={16} /> Enviar Informe
+              <Send size={16} /> Submit Report
             </>
           )}
         </button>

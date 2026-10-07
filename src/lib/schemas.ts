@@ -19,8 +19,8 @@ export const CURRENCY_OPTIONS = ["EUR", "USD"] as const;
 
 // Step 1: Report Metadata
 export const reportMetadataSchema = z.object({
-  projectCode: z.string().min(1, "Selecciona un proyecto"),
-  weekEnding: z.string().min(1, "Fecha requerida"),
+  projectCode: z.string().min(1, "Select a project"),
+  weekEnding: z.string().min(1, "Date required"),
   currency: z.enum(CURRENCY_OPTIONS),
 });
 
@@ -91,7 +91,7 @@ export const financeTrackingSchema = z
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             path: ["episodes", i, "episodeReel"],
-            message: "Selecciona el episodio/bobina",
+            message: "Select the episode/reel",
           });
         }
       }
@@ -100,7 +100,7 @@ export const financeTrackingSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["episodes"],
-        message: "Añade al menos un episodio/bobina con datos",
+        message: "Add at least one episode/reel with data",
       });
     }
   });
@@ -145,7 +145,7 @@ export const shotTrackingSchema = z
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             path: ["episodes", i, "episodeReel"],
-            message: "Selecciona el episodio/bobina",
+            message: "Select the episode/reel",
           });
         }
       }
@@ -154,7 +154,7 @@ export const shotTrackingSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["episodes"],
-        message: "Añade al menos un episodio/bobina con datos",
+        message: "Add at least one episode/reel with data",
       });
     }
   });
@@ -187,7 +187,7 @@ export const assetSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["assetName"],
-        message: "Nombre del asset requerido",
+        message: "Asset name required",
       });
     }
   });
@@ -198,10 +198,10 @@ export const assetTrackingSchema = z.object({
 
 // Step 5: Narrative Sections
 export const narrativeSchema = z.object({
-  progress: z.string().min(1, "Este campo es obligatorio"),
-  financeUpdates: z.string().min(1, "Este campo es obligatorio"),
-  warnings: z.string().min(1, "Este campo es obligatorio"),
-  noteworthy: z.string().min(1, "Este campo es obligatorio"),
+  progress: z.string().min(1, "This field is required"),
+  financeUpdates: z.string().min(1, "This field is required"),
+  warnings: z.string().min(1, "This field is required"),
+  noteworthy: z.string().min(1, "This field is required"),
 });
 
 // Full form schema

@@ -58,7 +58,7 @@ export function StepShots({ form }: StepShotsProps) {
       {/* ==================== SHOT TRACKING TABLE ==================== */}
       <div className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="bg-slate-700 px-4 py-2">
-          <h4 className="text-xs font-bold text-white uppercase tracking-wide">Shot Tracking — por Episodio / Bobina</h4>
+          <h4 className="text-xs font-bold text-white uppercase tracking-wide">Shot Tracking — by Episode / Reel</h4>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
@@ -160,7 +160,7 @@ export function StepShots({ form }: StepShotsProps) {
                     </td>
                     <td className="py-1 px-1">
                       {shotFields.length > 1 && (
-                        <button type="button" onClick={() => removeShot(index)} className="text-red-400 hover:text-red-600 p-0.5" aria-label="Eliminar">
+                        <button type="button" onClick={() => removeShot(index)} className="text-red-400 hover:text-red-600 p-0.5" aria-label="Delete">
                           <Trash2 size={12} />
                         </button>
                       )}
@@ -202,7 +202,7 @@ export function StepShots({ form }: StepShotsProps) {
             }
             className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-slate-700 bg-slate-100 rounded hover:bg-slate-200 transition-colors"
           >
-            <Plus size={12} /> Añadir fila
+            <Plus size={12} /> Add row
           </button>
         </div>
       </div>
@@ -231,7 +231,7 @@ export function StepShots({ form }: StepShotsProps) {
               {assetFields.length === 0 && (
                 <tr>
                   <td colSpan={9} className="py-4 text-center text-gray-400 text-xs">
-                    No hay assets. Haz clic en &ldquo;Añadir fila&rdquo; para comenzar.
+                    No assets yet. Click &ldquo;Add row&rdquo; to start.
                   </td>
                 </tr>
               )}
@@ -309,7 +309,7 @@ export function StepShots({ form }: StepShotsProps) {
                     />
                   </td>
                   <td className="py-1 px-1">
-                    <button type="button" onClick={() => removeAsset(index)} className="text-red-400 hover:text-red-600 p-0.5" aria-label="Eliminar">
+                    <button type="button" onClick={() => removeAsset(index)} className="text-red-400 hover:text-red-600 p-0.5" aria-label="Delete">
                       <Trash2 size={12} />
                     </button>
                   </td>
@@ -335,7 +335,7 @@ export function StepShots({ form }: StepShotsProps) {
             }
             className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-slate-700 bg-slate-100 rounded hover:bg-slate-200 transition-colors"
           >
-            <Plus size={12} /> Añadir fila
+            <Plus size={12} /> Add row
           </button>
         </div>
       </div>

@@ -10,6 +10,7 @@ const TABLES = {
   assetTracking: "tblIurs3ds5SN2o7e",
   pmcDates: "tblGkS3S5obVTy6NV",
   keyDates: "tblTMJn9V1uUW09XS",
+  budgetTracking: "tblhEDv5pRhIxMtMe",
 };
 
 // Type values in PMC DATES that the report form owns (reads + writes).
@@ -414,6 +415,46 @@ async function batchWrite(
     const result = await res.json();
     if (result.error) console.error(`batchWrite update error (${tableId}):`, result.error);
     await rateLimitDelay();
+  }
+}
+
+// Update the project's "EFC ProdCo Budget" in Budget Tracking with the total
+// EFC of the latest report. Only updates an existing Budget Tracking row for
+// the project (one row per project); never creates one. No-op if not found.
+export async function updateProjectEfc(
+  projectRecordId: string,
+  totalEfc: number
+): Promise<void> {
+  // Find the Budget Tracking row linked to this project. ARRAYJOIN on a link
+  // renders the project name (not its id), so match the raw link array.
+  const res = await fetch(
+    `${BASE_URL}/${TABLES.budgetTracking}?fields%5B%5D=Project&maxRecords=200`,
+    { headers, cache: "no-store" }
+  );
+  const data = await res.json();
+  if (data.error) {
+    console.error("updateProjectEfc: Budget Tracking read error:", data.error);
+    return;
+  }
+  const match = (data.records || []).find(
+    (r: { id: string; fields: Record<string, unknown> }) =>
+      Array.isArray(r.fields["Project"]) &&
+      (r.fields["Project"] as string[]).includes(projectRecordId)
+  );
+  if (!match) {
+    console.warn(
+      `updateProjectEfc: no Budget Tracking row for project ${projectRecordId}; skipping.`
+    );
+    return;
+  }
+  const patch = await fetch(`${BASE_URL}/${TABLES.budgetTracking}/${match.id}`, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify({ fields: { "EFC ProdCo Budget": totalEfc } }),
+  });
+  const patchResult = await patch.json();
+  if (patchResult.error) {
+    console.error("updateProjectEfc: PATCH error:", patchResult.error);
   }
 }
 

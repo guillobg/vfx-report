@@ -9,6 +9,7 @@ import {
   createAssetRecords,
   upsertPmcVfxDates,
   upsertKeyDates,
+  updateProjectEfc,
 } from "@/lib/airtable";
 import { fullReportSchema } from "@/lib/schemas";
 
@@ -157,6 +158,16 @@ export async function POST(request: NextRequest) {
     if (data.calendar?.keyDates?.length) {
       await upsertKeyDates(project.id, data.calendar.keyDates);
     }
+
+    // 4c. Update the project's "EFC ProdCo Budget" in Budget Tracking with this
+    // report's total EFC (episodes + Assets + Overheads + Supervisiones). The
+    // latest report always wins, so Budget Tracking reflects the current EFC.
+    const totalEfc =
+      data.finance.episodes.reduce((s, ep) => s + (ep.efc || 0), 0) +
+      (data.finance.assetsEfc || 0) +
+      (data.finance.overheadsEfc || 0) +
+      (data.finance.supervisionesEfc || 0);
+    await updateProjectEfc(project.id, totalEfc);
 
     // 5. Update the report with the view URL
     const baseUrl = process.env.NEXTAUTH_URL || "https://main.dj7gpiydmt385.amplifyapp.com";

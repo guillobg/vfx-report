@@ -49,7 +49,7 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
       {/* VFX Shots Table */}
       <div className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="bg-slate-700 px-4 py-2">
-          <h4 className="text-xs font-bold text-white uppercase tracking-wide">VFX Shots — por Episodio / Bobina</h4>
+          <h4 className="text-xs font-bold text-white uppercase tracking-wide">VFX Shots — by Episode / Reel</h4>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs table-fixed">
@@ -127,7 +127,7 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
                         type="button"
                         onClick={() => remove(index)}
                         className="text-red-400 hover:text-red-600 p-0.5"
-                        aria-label="Eliminar"
+                        aria-label="Delete"
                       >
                         <Trash2 size={12} />
                       </button>
@@ -152,7 +152,7 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
             }
             className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-slate-700 bg-slate-100 rounded hover:bg-slate-200 transition-colors"
           >
-            <Plus size={12} /> Añadir fila
+            <Plus size={12} /> Add row
           </button>
         </div>
       </div>
@@ -160,13 +160,13 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
       {/* Additional costs by category */}
       <div className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="bg-gray-700 px-4 py-2">
-          <h4 className="text-xs font-bold text-white uppercase">Costes Adicionales</h4>
+          <h4 className="text-xs font-bold text-white uppercase">Additional Costs</h4>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs table-fixed">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="text-left py-2 px-3 font-semibold text-gray-700 w-40">Categoría</th>
+                <th className="text-left py-2 px-3 font-semibold text-gray-700 w-40">Category</th>
                 <th className="text-left py-2 px-3 font-semibold text-gray-700 w-32">Budgeted Cost</th>
                 <th className="text-left py-2 px-3 font-semibold text-gray-700 w-32">EFC</th>
                 <th className="text-left py-2 px-3 font-semibold text-gray-700">Notes</th>
@@ -200,7 +200,7 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
                 <td className="py-1 px-3">
                   <input
                     {...register("finance.assetsNotes")}
-                    placeholder="Notas…"
+                    placeholder="Notes…"
                     className="w-full rounded border-gray-300 text-xs py-1 px-2 border"
                   />
                 </td>
@@ -232,7 +232,7 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
                 <td className="py-1 px-3">
                   <input
                     {...register("finance.overheadsNotes")}
-                    placeholder="Notas…"
+                    placeholder="Notes…"
                     className="w-full rounded border-gray-300 text-xs py-1 px-2 border"
                   />
                 </td>
@@ -264,7 +264,7 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
                 <td className="py-1 px-3">
                   <input
                     {...register("finance.supervisionesNotes")}
-                    placeholder="Notas…"
+                    placeholder="Notes…"
                     className="w-full rounded border-gray-300 text-xs py-1 px-2 border"
                   />
                 </td>
@@ -278,7 +278,7 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
       <div className="bg-slate-200 border border-slate-300 text-slate-800 rounded-lg p-4">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <p className="text-xs text-slate-500">Total Presupuesto</p>
+            <p className="text-xs text-slate-500">Total Budget</p>
             <p className="text-lg font-bold text-slate-900">
               {totalBudgeted.toLocaleString()} {currency}
             </p>
@@ -290,7 +290,7 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Varianza</p>
+            <p className="text-xs text-slate-500">Variance</p>
             <p
               className={`text-lg font-bold ${
                 totalBudgeted - totalEfc >= 0 ? "text-emerald-600" : "text-red-500"

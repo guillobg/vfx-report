@@ -51,13 +51,13 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
       {/* Data summary panel */}
       <div className="bg-slate-200 border border-slate-300 text-slate-800 rounded-xl p-5 space-y-4">
         <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-          📊 Resumen de datos introducidos
+          📊 Summary of entered data
         </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {/* Finance */}
           <div>
-            <p className="text-xs text-slate-500">Presupuesto Total</p>
+            <p className="text-xs text-slate-500">Total Budget</p>
             <p className="text-sm font-bold text-slate-900">{formatCurrency(totalBudgeted, currency)}</p>
           </div>
           <div>
@@ -65,13 +65,13 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
             <p className="text-sm font-bold text-slate-900">{formatCurrency(totalEfc, currency)}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Varianza</p>
+            <p className="text-xs text-slate-500">Variance</p>
             <p className={`text-sm font-bold ${variance >= 0 ? "text-emerald-600" : "text-red-500"}`}>
               {formatCurrency(variance, currency)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Estado</p>
+            <p className="text-xs text-slate-500">Status</p>
             <p className={`text-sm font-bold ${variance >= 0 ? "text-emerald-600" : "text-red-500"}`}>
               {variance >= 0 ? "Under budget" : "Over budget"}
             </p>
@@ -108,14 +108,14 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
         {/* Progress */}
         <div>
           <label htmlFor="progress" className="block text-base font-medium text-gray-700">
-            Progreso y Desarrollos Clave
+            Progress & Key Developments
             <span className="text-xs text-gray-500 ml-1">(Progress & Key Developments)</span><span className="text-red-500"> *</span>
           </label>
           <textarea
             id="progress"
             rows={4}
             {...register("narrative.progress")}
-            placeholder="¿Qué se ha logrado esta semana? Shots aprobados, entregas realizadas, hitos alcanzados..."
+            placeholder="What was accomplished this week? Shots approved, deliveries made, milestones reached..."
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 border"
           />
           {errors.narrative?.progress && (
@@ -126,7 +126,7 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
         {/* Finance Updates */}
         <div>
           <label htmlFor="financeUpdates" className="block text-base font-medium text-gray-700">
-            Actualizaciones Financieras
+            Finance Updates
             <span className="text-xs text-gray-500 ml-1">(Finance Updates)</span><span className="text-red-500"> *</span>
           </label>
           <textarea
@@ -144,11 +144,11 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
         {/* Warnings */}
         <div>
           <label htmlFor="warnings" className="block text-base font-medium text-gray-700">
-            Advertencias
+            Warnings
             <span className="text-xs text-gray-500 ml-1">(Warnings)</span><span className="text-red-500"> *</span>
           </label>
           <p className="text-xs text-gray-500 mt-0.5">
-            Usa 🔴 Crítico / 🟠 Alto / 🟡 Medio para indicar severidad
+            Use 🔴 Critical / 🟠 High / 🟡 Medium to indicate severity
           </p>
           <textarea
             id="warnings"
@@ -165,14 +165,14 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
         {/* Noteworthy */}
         <div>
           <label htmlFor="noteworthy" className="block text-base font-medium text-gray-700">
-            Notas Destacables
+            Noteworthy
             <span className="text-xs text-gray-500 ml-1">(Noteworthy)</span><span className="text-red-500"> *</span>
           </label>
           <textarea
             id="noteworthy"
             rows={2}
             {...register("narrative.noteworthy")}
-            placeholder="Notas históricas relevantes para referencia futura..."
+            placeholder="Historical notes relevant for future reference..."
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 border"
           />
           {errors.narrative?.noteworthy && (

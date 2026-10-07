@@ -45,7 +45,7 @@ export function StepReview({ form, lcBudget }: StepReviewProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-gray-900">Revisión Final</h2>
+        <h2 className="text-xl font-bold text-gray-900">Final Review</h2>
         <p className="mt-1 text-sm text-gray-600">Revisa todos los datos antes de enviar</p>
       </div>
 
@@ -64,16 +64,16 @@ export function StepReview({ form, lcBudget }: StepReviewProps) {
       {/* Summary cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="bg-white border rounded-lg p-4">
-          <p className="text-xs text-gray-500 uppercase">Proyecto</p>
+          <p className="text-xs text-gray-500 uppercase">Project</p>
           <p className="text-lg font-bold text-gray-900">{data.metadata?.projectCode || "—"}</p>
-          <p className="text-xs text-gray-500">Semana: {data.metadata?.weekEnding || "—"}</p>
+          <p className="text-xs text-gray-500">Week: {data.metadata?.weekEnding || "—"}</p>
         </div>
 
         <div className="bg-white border rounded-lg p-4">
-          <p className="text-xs text-gray-500 uppercase">Presupuesto Total</p>
+          <p className="text-xs text-gray-500 uppercase">Total Budget</p>
           <p className="text-lg font-bold text-gray-900">{formatCurrency(totalBudgeted, currency)}</p>
           <p className={`text-xs ${totalBudgeted - totalEfc >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-            Varianza: {formatCurrency(totalBudgeted - totalEfc, currency)}
+            Variance: {formatCurrency(totalBudgeted - totalEfc, currency)}
           </p>
         </div>
 
@@ -96,16 +96,16 @@ export function StepReview({ form, lcBudget }: StepReviewProps) {
 
       {/* Finance breakdown */}
       <div className="bg-white border rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">💰 Desglose Financiero</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">💰 Finance Breakdown</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b">
                 <th className="text-left py-1 pr-2">Episodio/Bobina</th>
                 <th className="text-left py-1 pr-2">Cut Status</th>
-                <th className="text-right py-1 pr-2">Presupuesto</th>
+                <th className="text-right py-1 pr-2">Budget</th>
                 <th className="text-right py-1 pr-2">EFC</th>
-                <th className="text-right py-1">Varianza</th>
+                <th className="text-right py-1">Variance</th>
               </tr>
             </thead>
             <tbody>
@@ -127,7 +127,7 @@ export function StepReview({ form, lcBudget }: StepReviewProps) {
 
       {/* Shot tracking breakdown */}
       <div className="bg-white border rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">🎯 Desglose de Shots por Capítulo</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">🎯 Shot Breakdown by Episode</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
@@ -197,7 +197,7 @@ export function StepReview({ form, lcBudget }: StepReviewProps) {
 
       {/* Narrative preview */}
       <div className="bg-white border rounded-lg p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700">📝 Informe Narrativo</h3>
+        <h3 className="text-sm font-semibold text-gray-700">📝 Narrative Report</h3>
         {[
           { label: "Progress & Key Developments", value: data.narrative?.progress },
           { label: "Finance Updates", value: data.narrative?.financeUpdates },
@@ -213,7 +213,7 @@ export function StepReview({ form, lcBudget }: StepReviewProps) {
 
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <p className="text-sm text-yellow-800">
-          ⚠️ Una vez enviado, los datos se guardarán en Airtable. Revisa cuidadosamente antes de enviar.
+          ⚠️ Once submitted, the data will be saved to Airtable. Review carefully before submitting.
         </p>
       </div>
     </div>

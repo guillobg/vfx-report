@@ -34,7 +34,7 @@ export function StepAssets({ form }: StepAssetsProps) {
       {fields.length === 0 && (
         <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
           <p className="text-gray-500 text-sm">
-            No hay assets añadidos. Haz clic en &ldquo;Añadir Asset&rdquo; para comenzar.
+            No assets added yet. Click &ldquo;Add Asset&rdquo; to start.
           </p>
         </div>
       )}
@@ -178,7 +178,7 @@ export function StepAssets({ form }: StepAssetsProps) {
         }
         className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
       >
-        <Plus size={16} /> Añadir Asset
+        <Plus size={16} /> Add Asset
       </button>
 
       {errors.assets?.assets && (
