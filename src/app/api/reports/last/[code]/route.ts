@@ -44,22 +44,28 @@ export async function GET(
       return NextResponse.json({ error: "Proyecto no encontrado" }, { status: 404 });
     }
 
-    // Find the most recent report for this project
-    const formula = `FIND("${project.id}", ARRAYJOIN(Project))`;
+    // Find the most recent report for this project.
+    // Note: a formula FIND on ARRAYJOIN(Project) matches the project's primary
+    // field (its name), not its record id — so fetch recent reports and match
+    // the raw Project link array by record id.
     const res = await fetch(
-      `${BASE_URL}/${WEEKLY_REPORTS}?filterByFormula=${encodeURIComponent(
-        formula
-      )}&sort%5B0%5D%5Bfield%5D=Week+Ending&sort%5B0%5D%5Bdirection%5D=desc&maxRecords=1`,
+      `${BASE_URL}/${WEEKLY_REPORTS}?sort%5B0%5D%5Bfield%5D=Week+Ending&sort%5B0%5D%5Bdirection%5D=desc&maxRecords=100`,
       { headers, cache: "no-store" }
     );
     const data = await res.json();
 
-    if (!data.records || data.records.length === 0) {
-      // No previous report — nothing to prefill
+    const match = (data.records || []).find(
+      (r: { fields: Record<string, any> }) =>
+        Array.isArray(r.fields["Project"]) &&
+        r.fields["Project"].includes(project.id)
+    );
+
+    if (!match) {
+      // No previous report — nothing to copy
       return NextResponse.json({ hasPrevious: false });
     }
 
-    const lastReport = data.records[0];
+    const lastReport = match;
     const fields = lastReport.fields;
 
     const financeIds = fields["Finance Tracking"] || [];
@@ -72,39 +78,43 @@ export async function GET(
       fetchRecordsByIds(ASSETS, assetIds),
     ]);
 
-    // Build prefill payload — ONLY stable fields, blank the weekly ones
+    // Build payload with the last report's values AS-IS (the "Copy last data"
+    // buttons overwrite each section with exactly what was reported before).
     const financeEpisodes = finance
       .filter((f: any) => /^\d{2}$/.test(f["Episode / Reel"] || "")) // only VFX Shots rows (episodes)
       .map((f: any) => ({
         episodeReel: f["Episode / Reel"] || "",
         cutStatus: f["Cut Status"] || "",
         budgetedCost: f["Budgeted Cost"] || 0,
-        efc: 0, // weekly — blank
-        notes: "",
+        efc: f["EFC"] || 0,
+        notes: f["Notes"] || "",
       }));
 
     const shotEpisodes = shots.map((s: any) => ({
       episodeReel: s["Episode / Reel"] || "",
       budgetedCount: 0,
-      bidding: s["Total Shots"] || 0, // stable total
-      queued: 0, // weekly — blank
-      inProgress: 0, // weekly — blank
-      finalDelivered: 0, // weekly — blank
-      onHold: 0, // weekly — blank
-      omitCtd: 0, // weekly — blank
-      notes: "",
+      bidding: s["Total Shots"] || 0,
+      queued: s["Queued Shots"] || 0,
+      inProgress: s["In Progress"] || 0,
+      finalDelivered: s["Final Delivered"] || 0,
+      onHold: s["On Hold"] || 0,
+      omitCtd: s["Omit CTD"] || 0,
+      notes: s["Notes"] || "",
     }));
 
     const assetRows = assets.map((a: any) => ({
       assetName: a["Asset Name"] || "",
       episodes: a["Episode(s)"] || "",
       vendors: a["Vendor(s)"] || "",
-      status: "", // weekly — blank
-      percentComplete: 0, // weekly — blank
+      status: a["Status"] || "",
+      percentComplete: Math.round(((a["% Complete"] || 0) as number) * 100),
       startDate: a["Start Date"] || "",
       endDate: a["End Date"] || "",
-      notes: "",
+      notes: a["Notes"] || "",
     }));
+
+    const findCat = (cat: string) =>
+      finance.find((f: any) => f["Category"] === cat) || {};
 
     return NextResponse.json({
       hasPrevious: true,
@@ -113,17 +123,15 @@ export async function GET(
         financeEpisodes,
         shotEpisodes,
         assets: assetRows,
-        // Carry over the additional cost categories' budgets (stable), blank EFC
-        assetsBudgeted:
-          finance.find((f: any) => f["Category"] === "Assets")?.["Budgeted Cost"] || 0,
-        overheadsBudgeted:
-          finance.find((f: any) => f["Category"] === "Overheads & Labour")?.[
-            "Budgeted Cost"
-          ] || 0,
-        supervisionesBudgeted:
-          finance.find((f: any) => f["Category"] === "Supervisiones")?.[
-            "Budgeted Cost"
-          ] || 0,
+        assetsBudgeted: findCat("Assets")["Budgeted Cost"] || 0,
+        assetsEfc: findCat("Assets")["EFC"] || 0,
+        assetsNotes: findCat("Assets")["Notes"] || "",
+        overheadsBudgeted: findCat("Overheads & Labour")["Budgeted Cost"] || 0,
+        overheadsEfc: findCat("Overheads & Labour")["EFC"] || 0,
+        overheadsNotes: findCat("Overheads & Labour")["Notes"] || "",
+        supervisionesBudgeted: findCat("Supervisiones")["Budgeted Cost"] || 0,
+        supervisionesEfc: findCat("Supervisiones")["EFC"] || 0,
+        supervisionesNotes: findCat("Supervisiones")["Notes"] || "",
       },
     });
   } catch (error) {

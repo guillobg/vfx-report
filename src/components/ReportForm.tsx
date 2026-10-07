@@ -14,7 +14,7 @@ import { StepFinance } from "@/components/steps/StepFinance";
 import { StepShots } from "@/components/steps/StepShots";
 import { StepNarrative } from "@/components/steps/StepNarrative";
 import { StepReview } from "@/components/steps/StepReview";
-import { Send, Loader2, Eye, EyeOff, Info, X } from "lucide-react";
+import { Send, Loader2, Eye, EyeOff, Info, X, Copy } from "lucide-react";
 
 /**
  * Click-to-open info popover shown next to a section title. Replaces the old
@@ -125,14 +125,42 @@ function Section({
   );
 }
 
+// Button shown at the right of a section header to copy that section's data
+// from the project's last report into the current one (overwrites the section).
+function CopyLastDataButton({
+  onClick,
+  loading,
+  disabled,
+}: {
+  onClick: () => void;
+  loading: boolean;
+  disabled: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title="Copy this section's data from the last report"
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+    >
+      {loading ? (
+        <Loader2 size={14} className="animate-spin" />
+      ) : (
+        <Copy size={14} />
+      )}
+      Copy last data
+    </button>
+  );
+}
+
 export function ReportForm() {
   const { data: session } = useSession();
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [prefillLoading, setPrefillLoading] = useState(false);
-  const [prefillInfo, setPrefillInfo] = useState<{ lastWeekEnding: string; count: number } | null>(null);
+  const [copying, setCopying] = useState<"calendar" | "finance" | "shots" | null>(null);
   const [showPreview, setShowPreview] = useState(false);
 
   const form = useForm<FullReport>({
@@ -189,7 +217,9 @@ export function ReportForm() {
     fetchProjects();
   }, []);
 
-  // When project is selected, pre-populate episodes/reels + calendar dates
+  // When project is selected, initialize blank episode rows (no auto-copy).
+  // The user pulls prior data on demand via the per-section "Copy last data"
+  // buttons.
   const selectedProjectCode = form.watch("metadata.projectCode");
   useEffect(() => {
     if (!selectedProjectCode) return;
@@ -202,139 +232,138 @@ export function ReportForm() {
 
     const isMovie = project.type === "Movies";
     const count = isMovie ? 5 : Math.min(project.numEpisodes || 4, 4);
-
     const episodeLabels = Array.from({ length: count }, (_, i) =>
       (i + 1).toString().padStart(2, "0")
     );
 
-    function buildBlank() {
-      form.setValue(
-        "finance.episodes",
-        episodeLabels.map((ep) => ({
-          episodeReel: ep,
-          cutStatus: "",
-          budgetedCost: 0,
-          efc: 0,
-          notes: "",
-        }))
-      );
-      form.setValue(
-        "shots.episodes",
-        episodeLabels.map((ep) => ({
-          episodeReel: ep,
-          budgetedCount: 0,
-          bidding: 0,
-          queued: 0,
-          inProgress: 0,
-          finalDelivered: 0,
-          onHold: 0,
-          omitCtd: 0,
-          notes: "",
-        }))
-      );
-      setPrefillInfo(null);
-    }
+    form.setValue(
+      "finance.episodes",
+      episodeLabels.map((ep) => ({
+        episodeReel: ep,
+        cutStatus: "",
+        budgetedCost: 0,
+        efc: 0,
+        notes: "",
+      }))
+    );
+    form.setValue(
+      "shots.episodes",
+      episodeLabels.map((ep) => ({
+        episodeReel: ep,
+        budgetedCount: 0,
+        bidding: 0,
+        queued: 0,
+        inProgress: 0,
+        finalDelivered: 0,
+        onHold: 0,
+        omitCtd: 0,
+        notes: "",
+      }))
+    );
+    form.setValue(
+      "calendar.vfxCalendar",
+      episodeLabels.map((ep) => ({
+        episodeReel: ep,
+        vfxStartDate: "",
+        vfxDeadlineDate: "",
+        vfxStartRecordId: "",
+        vfxDeadlineRecordId: "",
+      }))
+    );
+    form.setValue("calendar.keyDates", [
+      { category: "", description: "", date: "", recordId: "" },
+    ]);
+  }, [selectedProjectCode, projects, form]);
 
-    // Load calendar dates for the project (PMC VFX Start/Deadline + Key Dates)
-    async function loadCalendar() {
-      try {
-        const res = await fetch(`/api/projects/${selectedProjectCode}/dates`);
-        if (!res.ok) throw new Error("dates fetch failed");
-        const data = await res.json();
+  // --- "Copy last data" per section ---------------------------------------
 
-        // VFX calendar: merge existing dates with the episode list so every
-        // episode has a row, keeping record ids for upsert.
-        const existing = new Map<string, {
+  // Copy the project's current calendar (VFX Start/Deadline from PMC DATES +
+  // Key Dates) into the Calendar section, overwriting it.
+  const copyCalendar = async () => {
+    if (!selectedProjectCode) return;
+    setCopying("calendar");
+    try {
+      const res = await fetch(`/api/projects/${selectedProjectCode}/dates`);
+      if (!res.ok) throw new Error("dates fetch failed");
+      const data = await res.json();
+      const vfxRows = (data.vfxCalendar || []).map(
+        (d: {
+          episodeReel: string;
           vfxStartDate: string;
           vfxDeadlineDate: string;
           vfxStartRecordId: string;
           vfxDeadlineRecordId: string;
-        }>();
-        for (const d of data.vfxCalendar || []) {
-          existing.set(d.episodeReel, {
-            vfxStartDate: d.vfxStartDate || "",
-            vfxDeadlineDate: d.vfxDeadlineDate || "",
-            vfxStartRecordId: d.vfxStartRecordId || "",
-            vfxDeadlineRecordId: d.vfxDeadlineRecordId || "",
-          });
-        }
-        const vfxRows = episodeLabels.map((ep) => ({
-          episodeReel: ep,
-          vfxStartDate: existing.get(ep)?.vfxStartDate || "",
-          vfxDeadlineDate: existing.get(ep)?.vfxDeadlineDate || "",
-          vfxStartRecordId: existing.get(ep)?.vfxStartRecordId || "",
-          vfxDeadlineRecordId: existing.get(ep)?.vfxDeadlineRecordId || "",
-        }));
-        // Include any existing episodes outside the default range
-        for (const [ep, v] of existing) {
-          if (!episodeLabels.includes(ep)) {
-            vfxRows.push({ episodeReel: ep, ...v });
-          }
-        }
-        form.setValue("calendar.vfxCalendar", vfxRows);
-
-        // Key dates: existing rows + one blank row to add more
-        const keyRows = (data.keyDates || []).map(
-          (k: { recordId: string; category: string; description: string; date: string }) => ({
-            category: k.category || "",
-            description: k.description || "",
-            date: k.date || "",
-            recordId: k.recordId || "",
-          })
-        );
-        keyRows.push({ category: "", description: "", date: "", recordId: "" });
-        form.setValue("calendar.keyDates", keyRows);
-      } catch {
-        // On failure, still give the user editable blank calendar rows
-        form.setValue(
-          "calendar.vfxCalendar",
-          episodeLabels.map((ep) => ({
-            episodeReel: ep,
-            vfxStartDate: "",
-            vfxDeadlineDate: "",
-            vfxStartRecordId: "",
-            vfxDeadlineRecordId: "",
-          }))
-        );
-      }
+        }) => ({
+          episodeReel: d.episodeReel || "",
+          vfxStartDate: d.vfxStartDate || "",
+          vfxDeadlineDate: d.vfxDeadlineDate || "",
+          vfxStartRecordId: d.vfxStartRecordId || "",
+          vfxDeadlineRecordId: d.vfxDeadlineRecordId || "",
+        })
+      );
+      if (vfxRows.length) form.setValue("calendar.vfxCalendar", vfxRows);
+      const keyRows = (data.keyDates || []).map(
+        (k: { recordId: string; category: string; description: string; date: string }) => ({
+          category: k.category || "",
+          description: k.description || "",
+          date: k.date || "",
+          recordId: k.recordId || "",
+        })
+      );
+      keyRows.push({ category: "", description: "", date: "", recordId: "" });
+      form.setValue("calendar.keyDates", keyRows);
+    } catch (e) {
+      console.error("copyCalendar failed:", e);
+    } finally {
+      setCopying(null);
     }
+  };
 
-    // Try to prefill finance/shots from the last report
-    async function loadPrefill() {
-      setPrefillLoading(true);
-      try {
-        const res = await fetch(`/api/reports/last/${selectedProjectCode}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.hasPrevious && data.prefill) {
-            const p = data.prefill;
-            if (!p.financeEpisodes.length) {
-              buildBlank();
-            } else {
-              form.setValue("finance.episodes", p.financeEpisodes);
-              form.setValue("shots.episodes", p.shotEpisodes);
-              form.setValue("assets.assets", p.assets || []);
-              form.setValue("finance.assetsBudgeted", p.assetsBudgeted || 0);
-              form.setValue("finance.overheadsBudgeted", p.overheadsBudgeted || 0);
-              form.setValue("finance.supervisionesBudgeted", p.supervisionesBudgeted || 0);
-              setPrefillInfo({ lastWeekEnding: data.lastWeekEnding, count });
-            }
-          } else {
-            buildBlank();
-          }
-        } else {
-          buildBlank();
-        }
-      } catch {
-        buildBlank();
-      } finally {
-        setPrefillLoading(false);
+  // Copy finance episodes + additional cost categories from the last report.
+  const copyFinance = async () => {
+    if (!selectedProjectCode) return;
+    setCopying("finance");
+    try {
+      const res = await fetch(`/api/reports/last/${selectedProjectCode}`);
+      const data = await res.json();
+      if (data.hasPrevious && data.prefill) {
+        const p = data.prefill;
+        if (p.financeEpisodes?.length) form.setValue("finance.episodes", p.financeEpisodes);
+        form.setValue("finance.assetsBudgeted", p.assetsBudgeted || 0);
+        form.setValue("finance.assetsEfc", p.assetsEfc || 0);
+        form.setValue("finance.assetsNotes", p.assetsNotes || "");
+        form.setValue("finance.overheadsBudgeted", p.overheadsBudgeted || 0);
+        form.setValue("finance.overheadsEfc", p.overheadsEfc || 0);
+        form.setValue("finance.overheadsNotes", p.overheadsNotes || "");
+        form.setValue("finance.supervisionesBudgeted", p.supervisionesBudgeted || 0);
+        form.setValue("finance.supervisionesEfc", p.supervisionesEfc || 0);
+        form.setValue("finance.supervisionesNotes", p.supervisionesNotes || "");
       }
+    } catch (e) {
+      console.error("copyFinance failed:", e);
+    } finally {
+      setCopying(null);
     }
+  };
 
-    loadCalendar();
-    loadPrefill();
-  }, [selectedProjectCode, projects, form]);
+  // Copy shot tracking episodes + assets from the last report.
+  const copyShots = async () => {
+    if (!selectedProjectCode) return;
+    setCopying("shots");
+    try {
+      const res = await fetch(`/api/reports/last/${selectedProjectCode}`);
+      const data = await res.json();
+      if (data.hasPrevious && data.prefill) {
+        const p = data.prefill;
+        if (p.shotEpisodes?.length) form.setValue("shots.episodes", p.shotEpisodes);
+        form.setValue("assets.assets", p.assets || []);
+      }
+    } catch (e) {
+      console.error("copyShots failed:", e);
+    } finally {
+      setCopying(null);
+    }
+  };
 
   // Filter projects for coordinators
   const availableProjects =
@@ -443,23 +472,6 @@ export function ReportForm() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
-      {prefillLoading && (
-        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-2">
-          <Loader2 size={16} className="animate-spin text-blue-600" />
-          <p className="text-sm text-blue-700">Cargando datos del informe anterior...</p>
-        </div>
-      )}
-
-      {prefillInfo && (
-        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-          <p className="text-sm text-emerald-800">
-            💡 Data prefilled from the previous report (week{" "}
-            <strong>{prefillInfo.lastWeekEnding}</strong>) y fechas del calendario del
-            proyecto. Revisa y actualiza solo lo que haya cambiado esta semana.
-          </p>
-        </div>
-      )}
-
       {/* 1. Choose your Project */}
       <Section
         title="Choose your Project"
@@ -487,9 +499,16 @@ export function ReportForm() {
       <Section
         title="Calendar and Key Dates"
         tone="sky"
-        subtitle="VFX Calendar y fechas clave del proyecto"
+        subtitle="VFX Calendar and project key dates"
         helpTitle="Project-level dates"
         helpBody="VFX Start / VFX Deadline are saved per episode in the project calendar. In Key Dates you can note milestones such as creative reviews or shooting days, with their category, description and date."
+        headerRight={
+          <CopyLastDataButton
+            onClick={copyCalendar}
+            loading={copying === "calendar"}
+            disabled={!selectedProjectCode || copying !== null}
+          />
+        }
       >
         <SectionCalendar form={form} />
       </Section>
@@ -501,6 +520,13 @@ export function ReportForm() {
         subtitle="Overall Gross Tracking Cost"
         helpTitle="Budget and EFC"
         helpBody="Enter the budgeted cost and EFC per episode, plus the Assets, Overheads and Supervisiones categories. Totals and variance are calculated automatically."
+        headerRight={
+          <CopyLastDataButton
+            onClick={copyFinance}
+            loading={copying === "finance"}
+            disabled={!selectedProjectCode || copying !== null}
+          />
+        }
       >
         <StepFinance form={form} lcBudget={lcBudget} />
       </Section>
@@ -511,17 +537,24 @@ export function ReportForm() {
         tone="sky"
         subtitle="Overall Shot & Asset Tracking Status"
         helpTitle="Shots and assets status"
-        helpBody="Registra el estado semanal de los shots por episodio y el seguimiento de assets. El porcentaje de avance se calcula a partir de los entregados y omitidos."
+        helpBody="Record the weekly status of shots per episode and the asset tracking. The completion percentage is calculated from delivered and omitted shots."
+        headerRight={
+          <CopyLastDataButton
+            onClick={copyShots}
+            loading={copying === "shots"}
+            disabled={!selectedProjectCode || copying !== null}
+          />
+        }
       >
         <StepShots form={form} />
       </Section>
 
-      {/* 5. Narrativa */}
+      {/* 5. Narrative */}
       <Section
         title="Weekly Narrative"
         tone="sky"
-        subtitle="Secciones cualitativas del informe semanal"
-        helpTitle="Contexto del informe"
+        subtitle="Qualitative sections of the weekly report"
+        helpTitle="Report context"
         helpBody="Describe the progress, finance updates, warnings and noteworthy items. These sections accompany the numeric data in the final report."
       >
         <StepNarrative form={form} lcBudget={lcBudget} />
