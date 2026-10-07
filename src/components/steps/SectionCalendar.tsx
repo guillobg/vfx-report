@@ -26,7 +26,7 @@ export function SectionCalendar({ form }: SectionCalendarProps) {
   } = useFieldArray({ control, name: "calendar.keyDates" });
 
   return (
-    <div className="space-y-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
       {/* ==================== VFX CALENDAR ==================== */}
       <div className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="bg-slate-700 px-4 py-2">

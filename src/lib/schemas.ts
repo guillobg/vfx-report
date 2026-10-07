@@ -73,10 +73,13 @@ export const financeTrackingSchema = z
     episodes: z.array(financeEpisodeSchema),
     assetsBudgeted: z.coerce.number().min(0).default(0),
     assetsEfc: z.coerce.number().min(0).default(0),
+    assetsNotes: z.string().optional(),
     overheadsBudgeted: z.coerce.number().min(0).default(0),
     overheadsEfc: z.coerce.number().min(0).default(0),
+    overheadsNotes: z.string().optional(),
     supervisionesBudgeted: z.coerce.number().min(0).default(0),
     supervisionesEfc: z.coerce.number().min(0).default(0),
+    supervisionesNotes: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     let contentRows = 0;

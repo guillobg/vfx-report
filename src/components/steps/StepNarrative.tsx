@@ -107,7 +107,7 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
       <div className="space-y-5">
         {/* Progress */}
         <div>
-          <label htmlFor="progress" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="progress" className="block text-base font-medium text-gray-700">
             Progreso y Desarrollos Clave
             <span className="text-xs text-gray-500 ml-1">(Progress & Key Developments)</span><span className="text-red-500"> *</span>
           </label>
@@ -116,7 +116,7 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
             rows={4}
             {...register("narrative.progress")}
             placeholder="¿Qué se ha logrado esta semana? Shots aprobados, entregas realizadas, hitos alcanzados..."
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2 px-3 border"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 border"
           />
           {errors.narrative?.progress && (
             <p className="mt-1 text-sm text-red-600">{errors.narrative.progress.message}</p>
@@ -125,7 +125,7 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
 
         {/* Finance Updates */}
         <div>
-          <label htmlFor="financeUpdates" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="financeUpdates" className="block text-base font-medium text-gray-700">
             Actualizaciones Financieras
             <span className="text-xs text-gray-500 ml-1">(Finance Updates)</span><span className="text-red-500"> *</span>
           </label>
@@ -134,7 +134,7 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
             rows={3}
             {...register("narrative.financeUpdates")}
             placeholder="Contexto sobre cambios de presupuesto, varianzas, aprobaciones..."
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2 px-3 border"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 border"
           />
           {errors.narrative?.financeUpdates && (
             <p className="mt-1 text-sm text-red-600">{errors.narrative.financeUpdates.message}</p>
@@ -143,7 +143,7 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
 
         {/* Warnings */}
         <div>
-          <label htmlFor="warnings" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="warnings" className="block text-base font-medium text-gray-700">
             Advertencias
             <span className="text-xs text-gray-500 ml-1">(Warnings)</span><span className="text-red-500"> *</span>
           </label>
@@ -155,7 +155,7 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
             rows={3}
             {...register("narrative.warnings")}
             placeholder="🟠 Retraso en entrega de vendor X por cambios solicitados..."
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2 px-3 border"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 border"
           />
           {errors.narrative?.warnings && (
             <p className="mt-1 text-sm text-red-600">{errors.narrative.warnings.message}</p>
@@ -164,7 +164,7 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
 
         {/* Noteworthy */}
         <div>
-          <label htmlFor="noteworthy" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="noteworthy" className="block text-base font-medium text-gray-700">
             Notas Destacables
             <span className="text-xs text-gray-500 ml-1">(Noteworthy)</span><span className="text-red-500"> *</span>
           </label>
@@ -173,7 +173,7 @@ export function StepNarrative({ form, lcBudget }: StepNarrativeProps) {
             rows={2}
             {...register("narrative.noteworthy")}
             placeholder="Notas históricas relevantes para referencia futura..."
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2 px-3 border"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base py-2.5 px-3 border"
           />
           {errors.narrative?.noteworthy && (
             <p className="mt-1 text-sm text-red-600">{errors.narrative.noteworthy.message}</p>

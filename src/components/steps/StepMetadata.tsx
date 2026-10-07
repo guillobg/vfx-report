@@ -20,14 +20,14 @@ export function StepMetadata({ form, projects }: StepMetadataProps) {
       <div>
         <label
           htmlFor="projectCode"
-          className="block text-sm font-medium text-gray-700"
+          className="block text-base font-medium text-gray-700"
         >
-          Proyecto <span className="text-xs text-gray-500">(Project CODE)</span>
+          Proyecto <span className="text-sm text-gray-500">(Project CODE)</span>
         </label>
         <select
           id="projectCode"
           {...register("metadata.projectCode")}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 text-sm py-2 px-3 border"
+          className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 text-base py-2.5 px-3 border"
         >
           <option value="">— Selecciona un proyecto —</option>
           {projects.map((project) => (

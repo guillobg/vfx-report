@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
 import { useForm, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
@@ -14,12 +14,68 @@ import { StepFinance } from "@/components/steps/StepFinance";
 import { StepShots } from "@/components/steps/StepShots";
 import { StepNarrative } from "@/components/steps/StepNarrative";
 import { StepReview } from "@/components/steps/StepReview";
-import { Send, Loader2, Eye, EyeOff } from "lucide-react";
+import { Send, Loader2, Eye, EyeOff, Info, X } from "lucide-react";
 
 /**
- * Section wrapper — mirrors the reference layout:
- * uppercase title + divider line on the left panel, and an optional
- * helper column on the right.
+ * Click-to-open info popover shown next to a section title. Replaces the old
+ * fixed helper column so the section can use the full width.
+ */
+function InfoPopover({ title, body }: { title: string; body: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div className="relative inline-block" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-label={`Más información: ${title}`}
+        aria-expanded={open}
+        className="inline-flex items-center justify-center w-6 h-6 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+      >
+        <Info size={18} />
+      </button>
+      {open && (
+        <div className="absolute left-0 z-20 mt-2 w-80 max-w-[80vw] rounded-lg border border-slate-200 bg-white p-4 shadow-lg">
+          <div className="flex items-start justify-between gap-3">
+            <h4 className="text-sm font-semibold text-slate-700 border-l-2 border-amber-400 pl-2">
+              {title}
+            </h4>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Cerrar"
+              className="text-slate-400 hover:text-slate-600"
+            >
+              <X size={16} />
+            </button>
+          </div>
+          <p className="mt-2 text-sm text-slate-600 leading-relaxed">{body}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Full-width section: uppercase title + divider, an optional info popover, and
+ * optional right-aligned header content.
  */
 function Section({
   title,
@@ -38,37 +94,23 @@ function Section({
 }) {
   return (
     <section className="bg-gray-50 rounded-xl border border-gray-200 p-6 sm:p-8">
-      <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
-        {/* Main panel */}
-        <div>
-          <div className="border-b border-gray-200 pb-3 mb-6 flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-600 uppercase tracking-wide">
-                {title}
-              </h2>
-              {subtitle && (
-                <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
-              )}
-            </div>
-            {headerRight && <div className="shrink-0 text-right">{headerRight}</div>}
+      <div className="border-b border-gray-200 pb-4 mb-6 flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-700 uppercase tracking-wide">
+              {title}
+            </h2>
+            {helpTitle && helpBody && (
+              <InfoPopover title={helpTitle} body={helpBody} />
+            )}
           </div>
-          {children}
+          {subtitle && (
+            <p className="mt-1 text-base text-gray-500">{subtitle}</p>
+          )}
         </div>
-
-        {/* Helper column */}
-        {helpTitle && (
-          <aside className="hidden lg:block">
-            <div className="border-l-2 border-amber-400 pl-4">
-              <h3 className="text-base font-medium text-gray-700">{helpTitle}</h3>
-              {helpBody && (
-                <p className="mt-2 text-sm text-gray-500 leading-relaxed">
-                  {helpBody}
-                </p>
-              )}
-            </div>
-          </aside>
-        )}
+        {headerRight && <div className="shrink-0 text-right">{headerRight}</div>}
       </div>
+      {children}
     </section>
   );
 }
@@ -99,10 +141,13 @@ export function ReportForm() {
         episodes: [],
         assetsBudgeted: 0,
         assetsEfc: 0,
+        assetsNotes: "",
         overheadsBudgeted: 0,
         overheadsEfc: 0,
+        overheadsNotes: "",
         supervisionesBudgeted: 0,
         supervisionesEfc: 0,
+        supervisionesNotes: "",
       },
       shots: {
         episodes: [],
@@ -387,7 +432,7 @@ export function ReportForm() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8">
       {prefillLoading && (
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-2">
           <Loader2 size={16} className="animate-spin text-blue-600" />

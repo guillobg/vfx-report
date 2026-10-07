@@ -64,15 +64,15 @@ export function StepShots({ form }: StepShotsProps) {
           <table className="w-full text-xs">
             <thead className="bg-slate-50 border-b border-gray-200">
               <tr>
-                <th className="text-left py-2 px-2 font-semibold text-gray-700 w-16">Ep.</th>
-                <th className="text-right py-2 px-2 font-semibold text-gray-700">Total Shots</th>
-                <th className="text-right py-2 px-2 font-semibold text-sky-700">Queued</th>
-                <th className="text-right py-2 px-2 font-semibold text-yellow-700">In Progress</th>
-                <th className="text-right py-2 px-2 font-semibold text-emerald-700">Delivered</th>
-                <th className="text-right py-2 px-2 font-semibold text-orange-700">On Hold</th>
-                <th className="text-right py-2 px-2 font-semibold text-gray-500">Omit CTD</th>
+                <th className="text-center py-2 px-2 font-semibold text-gray-700 w-16">Ep.</th>
+                <th className="text-center py-2 px-2 font-semibold text-gray-700">Total Shots</th>
+                <th className="text-center py-2 px-2 font-semibold text-sky-700">Queued</th>
+                <th className="text-center py-2 px-2 font-semibold text-yellow-700">In Progress</th>
+                <th className="text-center py-2 px-2 font-semibold text-emerald-700">Delivered</th>
+                <th className="text-center py-2 px-2 font-semibold text-orange-700">On Hold</th>
+                <th className="text-center py-2 px-2 font-semibold text-gray-500">Omit CTD</th>
                 <th className="text-center py-2 px-2 font-semibold text-gray-700">%</th>
-                <th className="text-left py-2 px-2 font-semibold text-gray-700">Notes</th>
+                <th className="text-center py-2 px-2 font-semibold text-gray-700">Notes</th>
                 <th className="w-8"></th>
               </tr>
             </thead>
@@ -220,7 +220,7 @@ export function StepShots({ form }: StepShotsProps) {
                 <th className="text-left py-2 px-2 font-semibold text-gray-700">Ep.</th>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700">Vendor(s)</th>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700">Status</th>
-                <th className="text-right py-2 px-2 font-semibold text-gray-700">%</th>
+                <th className="text-left py-2 px-2 font-semibold text-gray-700">%</th>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700">Start</th>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700">End</th>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700">Notes</th>

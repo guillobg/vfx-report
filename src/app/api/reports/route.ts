@@ -77,28 +77,31 @@ export async function POST(request: NextRequest) {
           efc: ep.efc,
           notes: ep.notes,
         })),
-      ...(data.finance.assetsBudgeted || data.finance.assetsEfc
+      ...(data.finance.assetsBudgeted || data.finance.assetsEfc || data.finance.assetsNotes
         ? [{
             episodeReel: "",
             category: "Assets",
             budgetedCost: data.finance.assetsBudgeted,
             efc: data.finance.assetsEfc,
+            notes: data.finance.assetsNotes,
           }]
         : []),
-      ...(data.finance.overheadsBudgeted || data.finance.overheadsEfc
+      ...(data.finance.overheadsBudgeted || data.finance.overheadsEfc || data.finance.overheadsNotes
         ? [{
             episodeReel: "",
             category: "Overheads & Labour",
             budgetedCost: data.finance.overheadsBudgeted,
             efc: data.finance.overheadsEfc,
+            notes: data.finance.overheadsNotes,
           }]
         : []),
-      ...(data.finance.supervisionesBudgeted || data.finance.supervisionesEfc
+      ...(data.finance.supervisionesBudgeted || data.finance.supervisionesEfc || data.finance.supervisionesNotes
         ? [{
             episodeReel: "",
             category: "Supervisiones",
             budgetedCost: data.finance.supervisionesBudgeted,
             efc: data.finance.supervisionesEfc,
+            notes: data.finance.supervisionesNotes,
           }]
         : []),
     ];

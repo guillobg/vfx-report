@@ -52,13 +52,13 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
           <h4 className="text-xs font-bold text-white uppercase tracking-wide">VFX Shots — por Episodio / Bobina</h4>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-xs table-fixed">
             <thead className="bg-slate-50 border-b border-gray-200">
               <tr>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700 w-16">Ep.</th>
-                <th className="text-left py-2 px-2 font-semibold text-gray-700">Cut Status</th>
-                <th className="text-right py-2 px-2 font-semibold text-gray-700">Budgeted Cost</th>
-                <th className="text-right py-2 px-2 font-semibold text-gray-700">EFC</th>
+                <th className="text-left py-2 px-2 font-semibold text-gray-700 w-28">Cut Status</th>
+                <th className="text-left py-2 px-2 font-semibold text-gray-700 w-28">Budgeted Cost</th>
+                <th className="text-left py-2 px-2 font-semibold text-gray-700 w-28">EFC</th>
                 <th className="text-left py-2 px-2 font-semibold text-gray-700">Notes</th>
                 <th className="w-8"></th>
               </tr>
@@ -163,12 +163,13 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
           <h4 className="text-xs font-bold text-white uppercase">Costes Adicionales</h4>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-xs table-fixed">
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="text-left py-2 px-3 font-semibold text-gray-700 w-40">Categoría</th>
-                <th className="text-right py-2 px-3 font-semibold text-gray-700">Budgeted Cost ({currency})</th>
-                <th className="text-right py-2 px-3 font-semibold text-gray-700">EFC ({currency})</th>
+                <th className="text-left py-2 px-3 font-semibold text-gray-700 w-32">Budgeted Cost</th>
+                <th className="text-left py-2 px-3 font-semibold text-gray-700 w-32">EFC</th>
+                <th className="text-left py-2 px-3 font-semibold text-gray-700">Notes</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -196,6 +197,13 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
                     />
                   </div>
                 </td>
+                <td className="py-1 px-3">
+                  <input
+                    {...register("finance.assetsNotes")}
+                    placeholder="Notas…"
+                    className="w-full rounded border-gray-300 text-xs py-1 px-2 border"
+                  />
+                </td>
               </tr>
               <tr className="hover:bg-amber-50">
                 <td className="py-2 px-3 font-medium text-amber-800">Overheads & Labour</td>
@@ -221,6 +229,13 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
                     />
                   </div>
                 </td>
+                <td className="py-1 px-3">
+                  <input
+                    {...register("finance.overheadsNotes")}
+                    placeholder="Notas…"
+                    className="w-full rounded border-gray-300 text-xs py-1 px-2 border"
+                  />
+                </td>
               </tr>
               <tr className="hover:bg-purple-50">
                 <td className="py-2 px-3 font-medium text-purple-800">Supervisiones</td>
@@ -245,6 +260,13 @@ export function StepFinance({ form, lcBudget }: StepFinanceProps) {
                       className="w-full rounded border-gray-300 text-xs py-1 pl-5 pr-2 border text-right"
                     />
                   </div>
+                </td>
+                <td className="py-1 px-3">
+                  <input
+                    {...register("finance.supervisionesNotes")}
+                    placeholder="Notas…"
+                    className="w-full rounded border-gray-300 text-xs py-1 px-2 border"
+                  />
                 </td>
               </tr>
             </tbody>
